@@ -22,48 +22,92 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+__all__ = (
+    "docs",
+    "register_cogs",
+    "reverse_dict"
+)
 
-def copy_doc(original):
+
+class Utils:
     """
-    copies the documentation from a :class:`object`
-
-    Parameters
-    ----------
-    original: :class:`object`
-        the object from which the docs should be copied
-
-    Returns
-    -------
-    :class:`~typing.Callable[[:class:`object`], :class:`object`]`
-        the actual decorator
+    Is the class for all Utils.
     """
-    def decorator(overridden):
+
+    @staticmethod
+    def docs(original, /):
         """
-        is the actual decorator to override the docs
+        Copies the documentation from a :class:`object`.
 
         Parameters
         ----------
-        overridden: :class:`object`
-            the actual object where the docs should be overridden
-            by :arg:`original`
+        original: :class:`object`, :class:`str`
+            The object from which the docs should be copied.
 
         Returns
         -------
-        :class:`object`
-            the object with the overridden docs
+        :class:`Callable[[:class:`object`], :class:`object`]`
+            The actual decorator.
         """
-        overridden.__doc__ = original.__doc__
-        return overridden
+        if not isinstance(original, str):
+            original = original.__doc__
 
-    return decorator
+        def decorator(overridden):
+            """
+            Is the actual decorator to override the docs.
+
+            Parameters
+            ----------
+            overridden: :class:`object`
+                The actual object where the docs should be overridden
+                by :arg:`doc`.
+
+            Returns
+            -------
+            :class:`object`
+                The object with the overridden docs.
+            """
+            overridden.__doc__ = original
+            return overridden
+        return decorator
+
+    @staticmethod
+    def register_cogs(bot, *cogs):
+        """
+        Registers the cogs on the bot.
+
+        Parameters
+        ----------
+        bot: :class:`discord.extension.commands.Bot`
+            The bot on which the :arg:`cogs` should be registered.
+        *cogs: :class:`discord.extension.commands.Cog`
+            The cogs which should be registered on the :arg:`bot`.
+        """
+        raise NotImplementedError
+
+    @staticmethod
+    def reverse_dict(to_reverse, /):
+        """
+        Reverses a dictionary.
+
+        Parameters
+        ----------
+        to_reverse: :class:`dict[KT, VT]`
+            The dictionary which should be reversed.
+
+        Returns
+        -------
+        :class:`dict[VT, KT]`
+            The reversed dictionary.
+        """
+        new = {}
+        for k in to_reverse:
+            new.setdefault(to_reverse[k], k)
+        return new
 
 
-register_cogs = NotImplemented
-register_cogs.__doc__ = """
-    registers the cogs on the bot
+Utils = Utils()
 
-    Parameters
-    ----------
-    bot: :class:`~discordX3.extension.commands.Bot`
-    *cogs: :class:`~discordX3.extension.commands.Cog`
-    """
+docs = Utils.docs
+register_cogs = Utils.register_cogs
+reverse_dict = Utils.reverse_dict

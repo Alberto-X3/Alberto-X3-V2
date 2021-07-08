@@ -22,36 +22,81 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-_1337 = {
-    "o": "0",
-    "i": "1",
-    "l": "1",
-    "z": "2",
-    "e": "3",
-    "a": "4",
-    "s": "5",
-    # "g": "6" <-- "g" is set to "9"
-    "t": "7",
-    "b": "8",
-    "g": "9"
-}
+__all__ = (
+    "convert_normal_to_1337",
+    "convert_1337_to_normal",
+)
 
 
-def convert_to_1337(text, /):
+class Language:
     """
-    this function converts a "normal"-text to a "1337"-text
-
-    Parameters
-    ----------
-    text: :class:`str`
-        the text with should be converted
-
-    Returns
-    -------
-    :class:`str`
-        the converted text
+    Is the class for all Language-utils.
     """
-    return "".join(
-        [s if (sl := s.lower()) not in _1337 else _1337[sl]
-         for s in text]
-    )
+
+    table = {
+        "o": "0",
+        "i": "1",
+        "l": "1",
+        "z": "2",
+        "e": "3",
+        "a": "4",
+        "s": "5",
+        "g": "6",
+        "t": "7",
+        "b": "8"
+    }
+
+    from .utils import reverse_dict as _r_d
+    table_reversed = _r_d(table)
+
+    def c_normal_to_1337(self, text, /):
+        """
+        This function converts a "normal"-text to a "1337"-text.
+
+        Parameters
+        ----------
+        text: :class:`str`
+            The text with should be converted.
+
+        Returns
+        -------
+        :class:`str`
+            The converted text.
+        """
+        t = self.table
+        return "".join(
+            [s if (sl := s.lower()) not in t else t[sl]
+             for s in text]
+        )
+
+    def c_1337_to_normal(self, text, /):
+        """
+        This function converts a "1337"-text to a "normal"-text.
+
+        Warnings
+        --------
+        This method has problems to differ between ``i`` and ``l`` and 'll
+        convert it in every case to a ``i`` and the detection is not
+        case sensitive!
+
+        Parameters
+        ----------
+        text: :class:`str`
+            The text with should be converted.
+
+        Returns
+        -------
+        :class:`str`
+            The converted text.
+        """
+        t = self.table_reversed
+        return "".join(
+            [s if (sl := s.lower()) not in t else t[sl]
+             for s in text]
+        )
+
+
+Language = Language()
+
+convert_normal_to_1337 = Language.c_normal_to_1337
+convert_1337_to_normal = Language.c_1337_to_normal
