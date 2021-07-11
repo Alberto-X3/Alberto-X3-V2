@@ -56,7 +56,7 @@ class Language:
         Parameters
         ----------
         text: :class:`str`
-            The text with should be converted.
+            The text which should be converted.
 
         Returns
         -------
@@ -82,7 +82,7 @@ class Language:
         Parameters
         ----------
         text: :class:`str`
-            The text with should be converted.
+            The text which should be converted.
 
         Returns
         -------
