@@ -1,24 +1,32 @@
 # Alberto-X3
 
 ### Structure
-```
+```toml
 Project
 ├── AlbertoX3
-│   ├── cogs
+│   ├── extensions
 │   │   └── <category>
-│   │       ├── <cog>
+│   │       ├── <extension>
 │   │       │   ├── translations
 │   │       │   │   └── en.yml
 │   │       │   ├── __init__.py
-│   │       │   ├── cog.py
 │   │       │   ├── colors.py
+│   │       │   ├── ext.py
 │   │       │   ├── models.py
 │   │       │   ├── permissions.py
-│   │       │   └── settings.py
-│   │       ├── __init__.py
-│   │       └── contributors.py
-│   ├── utils (module)
-│   ├── bot.py
-│   └── settings.py
+│   │       │   ├── settings.py
+│   │       │   └── types.py  # for types which aren't part of `typing`
+│   │       └── __init__.py
+│   ├── __init__.py
+│   ├── __main__.py
+│   ├── colors.py
+│   ├── config.py
+│   ├── database.py
+│   ├── models.py
+│   ├── permissions.py
+│   ├── settings.py
+│   ├── translations.py
+│   ├── types.py
+│   └── utils.py
 └── config.yml
 ```
