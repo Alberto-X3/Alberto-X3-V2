@@ -6,7 +6,6 @@ __all__ = (
 
 
 from pathlib import Path
-from typing import Union
 from yaml import safe_load
 
 
@@ -15,18 +14,18 @@ class NestedInt(int):
     Integer with read-only dictionary.
     """
 
-    _values: dict[Union[str, int], int] = {}
+    _values: dict[str | int, int] = {}
 
     def __new__(
         cls,
         x: int,
-        values: dict[Union[str, int], int],
+        values: dict[str | int, int],
     ) -> "NestedInt":
         obj = super().__new__(cls, x)
         obj._values = values
         return obj
 
-    def __getitem__(self, item: Union[str, int]) -> int:
+    def __getitem__(self, item: str | int) -> int:
         return self._values[item]
 
     def __iter__(self):
@@ -48,7 +47,7 @@ with open(_colors_path / "flat_ui.yml", encoding="utf-8") as f:
     _color_data_flat_ui: dict[str, int] = safe_load(f)
 
 with open(_colors_path / "material.yml", encoding="utf-8") as f:
-    _color_data_material: dict[str, dict[Union[str, int], int]] = safe_load(f)
+    _color_data_material: dict[str, dict[str | int, int]] = safe_load(f)
 
 
 def _load_flat_ui(
