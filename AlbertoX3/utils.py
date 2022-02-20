@@ -3,8 +3,7 @@ __all__ = ("get_member",)
 import re
 from typing import Union, Optional
 
-from dis_snek.models import Context, User, Member
-from dis_snek.errors import NotFound
+from dis_snek import Context, User, Member
 
 
 async def get_member(
@@ -17,27 +16,18 @@ async def get_member(
 
     # case: User
     if isinstance(raw, User):
-        try:
-            return await ctx.bot.get_member(raw.id, ctx.guild_id)
-        except NotFound:
-            return None
+        return await ctx.bot.get_member(raw.id, ctx.guild_id)
 
     # case: int
     if isinstance(raw, int) or raw.isnumeric():
-        try:
-            return await ctx.bot.get_member(raw, ctx.guild_id)
-        except NotFound:
-            return None
+        return await ctx.bot.get_member(raw, ctx.guild_id)
 
     # case: str
     if isinstance(raw, str):
         # mention?
         mention = re.findall(r"^<?@?!?([0-9]{15,20})>?$", raw)
         if mention:
-            try:
-                return await ctx.bot.get_member(mention[0], ctx.guild_id)
-            except NotFound:
-                return None
+            return await ctx.bot.get_member(mention[0], ctx.guild_id)
 
         # name#discriminator?
         if len(raw) > 5 and raw[-5] == "#":

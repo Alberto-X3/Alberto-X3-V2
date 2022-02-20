@@ -1,8 +1,6 @@
 from AlbertoX3.utils import get_member
 
-from dis_snek import Snake
-from dis_snek.models import Scale, Context, Member
-from dis_snek.models.command import message_command
+from dis_snek import Snake, Scale, Context, Member, message_command
 
 
 class Kick(Scale):

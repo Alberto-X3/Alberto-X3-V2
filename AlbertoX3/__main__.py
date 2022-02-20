@@ -7,9 +7,7 @@ from AlbertoX3 import (
     Config,
 )
 
-from dis_snek import Snake
-from dis_snek.models.enums import ActivityType, Intents
-from dis_snek.models import Activity
+from dis_snek import Snake, ActivityType, Intents, Activity
 
 
 load_dotenv()
