@@ -1,0 +1,28 @@
+# bot
+name: Alberto X3
+prefix: t!
+
+# repo
+repo:
+  owner: Alberto-X3
+  name: Alberto-X3-V2
+  icon: "https://github.com/Alberto-X3.png"
+
+# support
+discord: "https://discord.gg/23rMcYu"
+
+# developers
+author: AlbertUnruh
+contributors:
+  - AlbertUnruh
+
+# language
+language:
+  default: EN
+  fallback: EN
+  available:
+    - EN
+
+# extensions
+extension:
+  folder: AlbertoX3/extensions/
