@@ -59,6 +59,28 @@ async def get_member(
                 if member.nickname == raw:
                     return member
 
+            # lowercase?
+            if raw.islower():
+                # name#discriminator? (lowercase)
+                if len(raw) > 5 and raw[-5] == "#":
+                    name, _, discriminator = raw.rpartition("#")
+                    for member in ctx.guild.members:
+                        # correct name? (lowercase)
+                        if member.user.username.lower() == name:
+                            # only discriminator left to check
+                            if member.user.discriminator == discriminator:
+                                return member
+
+                # name? (lowercase)
+                for member in ctx.guild.members:
+                    if member.user.username.lower() == raw:
+                        return member
+
+                # nick? (lowercase)
+                for member in ctx.guild.members:
+                    if member.nickname.lower() == raw:
+                        return member
+
             return None
 
 
@@ -98,5 +120,27 @@ async def get_user(
             for member in ctx.guild.members:
                 if member.nickname == raw:
                     return member.user
+
+            # lowercase?
+            if raw.islower():
+                # name#discriminator? (lowercase)
+                if len(raw) > 5 and raw[-5] == "#":
+                    name, _, discriminator = raw.rpartition("#")
+                    for user in ctx.bot.cache.user_cache.values():
+                        # correct name? (lowercase)
+                        if user.username.lower() == name:
+                            # only discriminator left to check
+                            if user.discriminator == discriminator:
+                                return user
+
+                # name? (lowercase)
+                for user in ctx.bot.cache.user_cache.values():
+                    if user.username.lower() == raw:
+                        return user
+
+                # nick? (lowercase)
+                for member in ctx.guild.members:
+                    if member.nickname.lower() == raw:
+                        return member.user
 
             return None
