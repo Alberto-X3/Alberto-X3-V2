@@ -23,6 +23,6 @@ language:
   available:
     - EN
 
-# extensions
-extension:
-  folder: AlbertoX3/extensions/
+# scale
+scale:
+  folder: AlbertoX3/scales/

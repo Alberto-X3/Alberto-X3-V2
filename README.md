@@ -4,9 +4,9 @@
 ```
 Project
 ├── AlbertoX3
-│   ├── extensions
+│   ├── scales
 │   │   └── <category>
-│   │       ├── <extension>
+│   │       ├── <scale>
 │   │       │   ├── translations
 │   │       │   │   └── en.yml
 │   │       │   ├── __init__.py

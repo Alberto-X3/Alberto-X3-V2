@@ -1,4 +1,6 @@
-from AlbertoX3.colors import AllColors
+__all__ = ("setup",)
+
+
 from AlbertoX3.utils import get_member
 
 from dis_snek import (
@@ -12,10 +14,12 @@ from dis_snek import (
     EmbedFooter,
 )
 
+from .colors import Colors
+
 
 class Kick(Scale):
     @message_command()
-    async def kick(self, ctx: Context, who: Member, *reason: str):
+    async def kick(self, ctx: Context, who: str, *reason: str):
         reason = " ".join(reason) or "No reason"
         who: Member = await get_member(ctx, who)
         embed = Embed(
@@ -29,10 +33,10 @@ class Kick(Scale):
             embed.description = (
                 f"You tried to kick `{who}` with following reason: `{reason}`"
             )
-            embed.color = AllColors.default
+            embed.color = Colors.kicked
         else:
             embed.description = ":(\nI can't find this User..."
-            embed.color = AllColors.error
+            embed.color = Colors.failed
 
         await ctx.message.reply(embed=embed)
 

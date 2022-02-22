@@ -59,8 +59,9 @@ class Config:
     LANGUAGE_FALLBACK: str
     LANGUAGE_AVAILABLE: list[str]
 
-    # extensions
-    EXTENSION_FOLDER: Path
+    # scales
+    SCALES_FOLDER_RAW: str
+    SCALES_FOLDER: Path
 
 
 def get_config_values() -> str:
@@ -132,11 +133,12 @@ def load_language(config: dict):
     Config.LANGUAGE_AVAILABLE = config["language"]["available"]
 
 
-def load_extensions(config: dict, path: Path = Path.cwd()):
-    folder = Path(config["extension"]["folder"])
+def load_scales(config: dict, path: Path = Path.cwd()):
+    Config.SCALES_FOLDER_RAW = config["scale"]["folder"]
+    folder = Path(Config.SCALES_FOLDER_RAW)
     if not folder.is_absolute():  # relative path is given
         folder = path / folder
-    Config.EXTENSION_FOLDER = folder
+    Config.SCALES_FOLDER = folder
 
 
 def load_config_file(path: Path):
@@ -156,4 +158,4 @@ def load_config_file(path: Path):
     load_help(config)
     load_developers(config)
     load_language(config)
-    load_extensions(config, path.parent)
+    load_scales(config, path.parent)

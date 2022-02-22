@@ -42,15 +42,18 @@ bot = Snake(
 bot.grow_scale("dis_snek.ext.debug_scale")
 
 
-for category in Config.EXTENSION_FOLDER.iterdir():
+scale_import = (
+    Config.SCALES_FOLDER_RAW.replace("/", ".").replace("\\", ".").removesuffix(".")
+)
+for category in Config.SCALES_FOLDER.iterdir():
     if category.is_file() or category.name.startswith("_"):
         continue
     for extension in category.iterdir():
         if extension.is_file() or extension.name.startswith("_"):
             continue
-        logger.info(f"Adding Scale '{category.name}.{extension.name}'")
+        logger.info(f"Adding Scale '{scale_import}.{category.name}.{extension.name}'")
         bot.grow_scale(
-            f"AlbertoX3.{Config.EXTENSION_FOLDER.name}.{category.name}.{extension.name}",
+            f"{scale_import}.{category.name}.{extension.name}",
         )
 
 
