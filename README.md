@@ -11,7 +11,6 @@ Project
 │   │       │   │   └── en.yml
 │   │       │   ├── __init__.py
 │   │       │   ├── colors.py
-│   │       │   ├── ext.py
 │   │       │   ├── models.py
 │   │       │   ├── permissions.py
 │   │       │   ├── settings.py

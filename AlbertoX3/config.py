@@ -1,6 +1,7 @@
 __all__ = (
     "Contributor",
     "Config",
+    "get_config_values",
     "load_config_file",
 )
 
@@ -8,6 +9,8 @@ __all__ = (
 import re
 from pathlib import Path
 from yaml import safe_load
+
+from .utils import get_values
 
 
 class Contributor:
@@ -58,6 +61,10 @@ class Config:
 
     # extensions
     EXTENSION_FOLDER: Path
+
+
+def get_config_values() -> str:
+    return get_values(Config)
 
 
 def load_bot(config: dict):

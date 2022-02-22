@@ -1,4 +1,5 @@
 __all__ = (
+    "get_values",
     "get_member",
     "get_user",
 )
@@ -7,6 +8,18 @@ __all__ = (
 import re
 
 from dis_snek import Context, User, Member
+
+
+def get_values(obj: ...) -> str:
+    keys: list[str] = [k for k in dir(obj) if not k.startswith("_")]
+    length = len(max(keys, key=len))
+    string: list[str] = []
+
+    for key in keys:
+        val = getattr(obj, key)
+        string.append(f"`{key.ljust(length)}`: {val!r}")
+
+    return "\n".join(string)
 
 
 async def get_member(

@@ -1,4 +1,7 @@
-__all__ = ("merge",)
+__all__ = (
+    "Translations",
+    "merge",
+)
 
 
 def merge(
