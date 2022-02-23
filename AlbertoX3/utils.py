@@ -78,6 +78,8 @@ async def get_member(
 
                 # nick? (lowercase)
                 for member in ctx.guild.members:
+                    if member.nickname is None:
+                        continue
                     if member.nickname.lower() == raw:
                         return member
 

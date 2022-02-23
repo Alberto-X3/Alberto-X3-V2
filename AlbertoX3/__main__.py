@@ -2,14 +2,26 @@ from AlbertUnruhUtils.utils.logger import get_logger
 from dotenv import load_dotenv
 from os import environ
 from pathlib import Path
+from traceback import format_exception
 
 from AlbertoX3 import (
     load_config_file,
     Config,
     get_config_values,
+    AllColors,
 )
 
-from dis_snek import Snake, ActivityType, Intents, Activity
+from dis_snek import (
+    Snake,
+    ActivityType,
+    Intents,
+    Activity,
+    Context,
+    Embed,
+    EmbedFooter,
+    Timestamp,
+    File,
+)
 
 
 load_dotenv()
@@ -55,6 +67,40 @@ for category in Config.SCALES_FOLDER.iterdir():
         bot.grow_scale(
             f"{scale_import}.{category.name}.{extension.name}",
         )
+
+
+async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
+    await ctx.send(
+        embed=Embed(
+            color=AllColors.error,
+            title="An internal error occurred :(",
+            footer=EmbedFooter(
+                icon_url=bot.user.avatar.url,
+                text=Config.NAME,
+            ),
+            timestamp=Timestamp.now(),
+        ),
+    )
+    to_ping = "".join(f"<@{c[0]}>" for c in Config.CONTRIBUTORS)
+    f = Path(__file__).parent / f"tmp/{ctx.message.id}.log"
+    f.write_text("".join(format_exception(error)), encoding="utf-8")  # type: ignore
+    embed = Embed(
+        description=f"**An error occurred [__here__]({ctx.message.jump_url}).**",
+        color=AllColors.error,
+    )
+    embed.add_field("Guild", ctx.guild.name, True)
+    embed.add_field("Channel", ctx.channel.mention, True)
+    embed.add_field("User", ctx.author.mention, True)
+    await (await bot.get_channel(945784138416418907)).send(
+        content=f"||{to_ping}||",
+        embed=embed,
+        file=File(f, "traceback.py"),
+    )
+    await Snake.on_command_error(bot, ctx, error, *args, **kwargs)
+    f.unlink()
+
+
+bot.on_command_error = on_command_error
 
 
 bot.start(environ["TOKEN"])
