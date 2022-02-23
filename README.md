@@ -21,6 +21,7 @@ Project
 │   ├── colors.py
 │   ├── config.py
 │   ├── database.py
+│   ├── environment.py
 │   ├── models.py
 │   ├── permissions.py
 │   ├── settings.py

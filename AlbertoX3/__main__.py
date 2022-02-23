@@ -1,6 +1,4 @@
 from AlbertUnruhUtils.utils.logger import get_logger
-from dotenv import load_dotenv
-from os import environ
 from pathlib import Path
 from traceback import format_exception
 
@@ -9,6 +7,7 @@ from AlbertoX3 import (
     Config,
     get_config_values,
     AllColors,
+    TOKEN,
 )
 
 from dis_snek import (
@@ -24,7 +23,6 @@ from dis_snek import (
 )
 
 
-load_dotenv()
 get_logger("asyncio").setLevel("INFO")
 logger = get_logger(None)
 
@@ -103,4 +101,4 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
 bot.on_command_error = on_command_error
 
 
-bot.start(environ["TOKEN"])
+bot.start(TOKEN)

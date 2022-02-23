@@ -2,6 +2,7 @@ __all__ = (
     "get_values",
     "get_member",
     "get_user",
+    "get_bool",
 )
 
 
@@ -146,3 +147,29 @@ async def get_user(
                         return member.user
 
             return None
+
+
+def get_bool(
+    raw: ...,
+    /,
+) -> bool:
+    """
+    Parameters
+    ----------
+    raw: any
+        The input to get the boolean from.
+
+    Returns
+    -------
+    bool
+
+    Raises
+    ------
+    ValueError
+        If it's unclear what the boolean is.
+    """
+    if raw in ["True", "true", "t", "yes", "y", "1", 1, True]:
+        return True
+    if raw in ["False", "false", "f", "no", "n", "0", 0, False]:
+        return False
+    raise ValueError(f"Cannot assign {raw!r} to True or False!")

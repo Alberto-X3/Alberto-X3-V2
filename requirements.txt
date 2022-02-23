@@ -1,4 +1,6 @@
+aiomysql~=0.0.22
 AlbertUnruhUtils.py~=2.1.0
 dis-snek~=6.0.0
+SQLAlchemy~=1.4.31
 python-dotenv~=0.19.2
 PyYAML~=6.0

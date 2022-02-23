@@ -7,6 +7,8 @@ __url__ = "https://github.com/Alberto-X3/Alberto-X3-V2"
 
 from .colors import *
 from .config import *
+from .database import *
+from .environment import *
 from .models import *
 from .permissions import *
 from .settings import *
