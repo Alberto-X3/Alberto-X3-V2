@@ -1,4 +1,7 @@
-__all__ = ("setup",)
+__all__ = (
+    "Kick",
+    "setup",
+)
 
 
 from AlbertoX3.utils import get_member

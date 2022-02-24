@@ -49,9 +49,6 @@ bot = Snake(
 )
 
 
-bot.grow_scale("dis_snek.ext.debug_scale")
-
-
 scale_import = (
     Config.SCALES_FOLDER_RAW.replace("/", ".").replace("\\", ".").removesuffix(".")
 )
