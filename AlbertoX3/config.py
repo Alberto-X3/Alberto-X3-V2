@@ -2,15 +2,20 @@ __all__ = (
     "Contributor",
     "Config",
     "get_config_values",
+    "get_scales",
     "load_config_file",
 )
 
 
 import re
 from pathlib import Path
+from typing import NamedTuple
 from yaml import safe_load
 
 from .utils import get_values
+
+
+_Scale = NamedTuple("_Scale", (("name", str), ("package", str)))
 
 
 class Contributor:
@@ -62,6 +67,7 @@ class Config:
     # scales
     SCALES_FOLDER_RAW: str
     SCALES_FOLDER: Path
+    SCALES: set[_Scale]
 
 
 def get_config_values() -> str:
@@ -139,6 +145,48 @@ def load_scales(config: dict, path: Path = Path.cwd()):
     if not folder.is_absolute():  # relative path is given
         folder = path / folder
     Config.SCALES_FOLDER = folder
+    Config.SCALES = get_scales()
+
+
+def get_scales(
+    scale_marker: str = "__init__.py", *, cur_path: Path = None, cur_mod: str = ""
+) -> set[_Scale]:
+    """
+    Recursively gets every scale.
+
+    Parameters
+    ----------
+    scale_marker: str
+        The filename to recognize a Scale.
+    cur_path: Path, optional
+        The current path (needed due to recursion).
+    cur_mod: str
+        The current module (needed due to recursion).
+
+    Returns
+    -------
+    set[_Scale]
+        All paths to the scales.
+    """
+    scales = set()
+
+    cur_path = cur_path or Config.SCALES_FOLDER
+    cur_mod = cur_mod or (
+        Config.SCALES_FOLDER_RAW.replace("/", ".").replace("\\", ".").removesuffix(".")
+    )
+
+    for folder in cur_path.iterdir():
+        if folder.is_file():
+            if folder.name == scale_marker:
+                scales.add(_Scale(name=folder.parent.name, package=cur_mod))
+            continue
+
+        if folder.name.startswith("_"):
+            continue
+
+        scales.update(get_scales(cur_path=folder, cur_mod=f"{cur_mod}.{folder.name}"))
+
+    return scales
 
 
 def load_config_file(path: Path):

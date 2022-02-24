@@ -49,19 +49,9 @@ bot = Snake(
 )
 
 
-scale_import = (
-    Config.SCALES_FOLDER_RAW.replace("/", ".").replace("\\", ".").removesuffix(".")
-)
-for category in Config.SCALES_FOLDER.iterdir():
-    if category.is_file() or category.name.startswith("_"):
-        continue
-    for extension in category.iterdir():
-        if extension.is_file() or extension.name.startswith("_"):
-            continue
-        logger.info(f"Adding Scale '{scale_import}.{category.name}.{extension.name}'")
-        bot.grow_scale(
-            f"{scale_import}.{category.name}.{extension.name}",
-        )
+for scale in Config.SCALES:
+    logger.info(f"Adding Scale '{scale.name}' from '{scale.package}'")
+    bot.grow_scale(scale.package)
 
 
 async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
