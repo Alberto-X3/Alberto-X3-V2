@@ -13,7 +13,7 @@ import sys
 from dis_snek import Context, User, Member
 from typing import TypeVar, Type
 
-from .types import Scale_
+from .types import PrimitiveScale
 
 
 T = TypeVar("T")
@@ -186,7 +186,7 @@ def get_bool(
 def get_subclasses_in_scales(
     base: Type[T],
     *,
-    scales: list[Scale_] = None,
+    scales: list[PrimitiveScale] = None,
 ) -> list[Type[T]]:
     """
     Returns all subclasses from base declared in
@@ -195,7 +195,7 @@ def get_subclasses_in_scales(
     ----------
     base: Type[T]
         The baseclass to get the subclasses from.
-    scales: list[Scale_], optional
+    scales: list[PrimitiveScale], optional
         The scales to look at (defaults to ``Config.SCALES``).
 
     Returns

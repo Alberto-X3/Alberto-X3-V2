@@ -12,7 +12,7 @@ from pathlib import Path
 from yaml import safe_load
 
 from .utils import get_values
-from .types import Scale_
+from .types import PrimitiveScale
 
 
 class Contributor:
@@ -64,7 +64,7 @@ class Config:
     # scales
     SCALES_FOLDER_RAW: str
     SCALES_FOLDER: Path
-    SCALES: set[Scale_]
+    SCALES: set[PrimitiveScale]
 
 
 def get_config_values() -> str:
@@ -147,7 +147,7 @@ def load_scales(config: dict, path: Path = Path.cwd()):
 
 def get_scales(
     scale_marker: str = "__init__.py", *, cur_path: Path = None, cur_mod: str = ""
-) -> set[Scale_]:
+) -> set[PrimitiveScale]:
     """
     Recursively gets every scale.
 
@@ -175,7 +175,7 @@ def get_scales(
     for folder in cur_path.iterdir():
         if folder.is_file():
             if folder.name == scale_marker:
-                scales.add(Scale_(name=folder.parent.name, package=cur_mod))
+                scales.add(PrimitiveScale(name=folder.parent.name, package=cur_mod))
             continue
 
         if folder.name.startswith("_"):

@@ -1,7 +1,7 @@
-__all__ = ("Scale_",)
+__all__ = ("PrimitiveScale",)
 
 
 from typing import NamedTuple
 
 
-Scale_ = NamedTuple("Scale_", (("name", str), ("package", str)))
+PrimitiveScale = NamedTuple("PrimitiveScale", (("name", str), ("package", str)))
