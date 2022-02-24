@@ -5,9 +5,13 @@ __all__ = (
 
 
 from dis_snek.ext.debug_scale import DebugScale, debug_embed, InteractionContext  # noqa
+from dis_snek import (
+    Snake,
+    Scale,
+)
 
 
-class Debug(DebugScale):
+class Debug(DebugScale, Scale):
     @DebugScale.debug_info.subcommand(
         "config", sub_cmd_description="Get information about the config"
     )
@@ -21,5 +25,5 @@ class Debug(DebugScale):
         await ctx.send(embeds=[e])
 
 
-def setup(bot):
+def setup(bot: Snake):
     Debug(bot)

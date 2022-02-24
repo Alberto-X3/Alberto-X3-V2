@@ -3,12 +3,20 @@ __all__ = (
     "get_member",
     "get_user",
     "get_bool",
+    "get_subclasses_in_scales",
 )
 
 
 import re
+import sys
 
 from dis_snek import Context, User, Member
+from typing import TypeVar, Type
+
+from .types import Scale_
+
+
+T = TypeVar("T")
 
 
 def get_values(obj: ...) -> str:
@@ -173,3 +181,36 @@ def get_bool(
     if raw in ["False", "false", "f", "no", "n", "0", 0, False]:
         return False
     raise ValueError(f"Cannot assign {raw!r} to True or False!")
+
+
+def get_subclasses_in_scales(
+    base: Type[T],
+    *,
+    scales: list[Scale_] = None,
+) -> list[Type[T]]:
+    """
+    Returns all subclasses from base declared in
+
+    Parameters
+    ----------
+    base: Type[T]
+        The baseclass to get the subclasses from.
+    scales: list[Scale_], optional
+        The scales to look at (defaults to ``Config.SCALES``).
+
+    Returns
+    -------
+    list[Type[T]]
+    """
+    if scales is None:
+        from .config import Config
+
+        scales = Config.SCALES
+    scales = set([scale.package for scale in scales])
+    print(scales)
+    print(base.__subclasses__())
+    return [
+        cls
+        for cls in base.__subclasses__()
+        if sys.modules[cls.__module__].__package__ in scales
+    ]

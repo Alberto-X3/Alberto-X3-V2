@@ -9,13 +9,10 @@ __all__ = (
 
 import re
 from pathlib import Path
-from typing import NamedTuple
 from yaml import safe_load
 
 from .utils import get_values
-
-
-_Scale = NamedTuple("_Scale", (("name", str), ("package", str)))
+from .types import Scale_
 
 
 class Contributor:
@@ -67,7 +64,7 @@ class Config:
     # scales
     SCALES_FOLDER_RAW: str
     SCALES_FOLDER: Path
-    SCALES: set[_Scale]
+    SCALES: set[Scale_]
 
 
 def get_config_values() -> str:
@@ -150,7 +147,7 @@ def load_scales(config: dict, path: Path = Path.cwd()):
 
 def get_scales(
     scale_marker: str = "__init__.py", *, cur_path: Path = None, cur_mod: str = ""
-) -> set[_Scale]:
+) -> set[Scale_]:
     """
     Recursively gets every scale.
 
@@ -178,7 +175,7 @@ def get_scales(
     for folder in cur_path.iterdir():
         if folder.is_file():
             if folder.name == scale_marker:
-                scales.add(_Scale(name=folder.parent.name, package=cur_mod))
+                scales.add(Scale_(name=folder.parent.name, package=cur_mod))
             continue
 
         if folder.name.startswith("_"):
