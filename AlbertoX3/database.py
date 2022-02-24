@@ -36,6 +36,7 @@ from .environment import (
     DB_POOL_MAX_OVERFLOW,
     DB_SHOW_SQL_STATEMENTS,
 )
+from .utils import get_subclasses_in_scales
 
 
 T = TypeVar("T")
@@ -159,7 +160,8 @@ class DB:
         """
         logger.debug("Creating tables")
 
-        tables = []  # ToDo: collect from Scales
+        d: Base
+        tables = [d.__table__ for d in get_subclasses_in_scales(Base)]
 
         async with self.engine.begin() as conn:
             await conn.run_sync(partial(Base.metadata.create_all, tables=tables))
