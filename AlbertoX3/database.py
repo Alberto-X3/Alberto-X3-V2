@@ -1,5 +1,6 @@
 __all__ = (
     "Base",
+    "UTCDatetime",
     "DB",
     "db_context",
     "db_wrapper",
@@ -11,6 +12,7 @@ __all__ = (
 from asyncio import Event
 from contextlib import asynccontextmanager
 from contextvars import ContextVar
+from datetime import datetime, timezone
 from functools import wraps, partial
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, create_async_engine
 from sqlalchemy.engine import URL
@@ -20,6 +22,7 @@ from sqlalchemy.sql import Executable
 from sqlalchemy.sql.expression import exists as sa_exists, delete as sa_delete, Delete
 from sqlalchemy.sql.functions import count
 from sqlalchemy.sql.selectable import Exists
+from sqlalchemy import TypeDecorator, DateTime
 from typing import TypeVar, Type
 
 from AlbertUnruhUtils.utils.logger import get_logger
@@ -87,6 +90,25 @@ class Base(metaclass=DeclarativeMeta):
 
     def __init__(self, **kwargs: ...):
         self.registry.constructor(self, **kwargs)
+
+
+class UTCDatetime(TypeDecorator):
+    impl = DateTime
+    cache_ok = True
+
+    def process_bind_param(self, value, dialect):
+        return value
+
+    def process_result_value(self, value, dialect):
+        if value is None:
+            return None
+        return value.replace(tzinfo=timezone.utc)
+
+    def process_literal_param(self, value, dialect):
+        raise NotImplementedError
+
+    def python_type(self):
+        return datetime
 
 
 class DB:
