@@ -47,7 +47,7 @@ class Debug(DebugScale, Scale):
                 break
 
         await Paginator.create_from_string(
-            self.bot, "\n".join(res or ["Empty!"]), "```", "```"
+            self.bot, "\n".join(res or ["Empty!"]), "```", "```", 2000, 300
         ).send(ctx)
 
 
