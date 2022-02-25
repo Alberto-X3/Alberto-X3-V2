@@ -1,4 +1,5 @@
 from AlbertUnruhUtils.utils.logger import get_logger
+from itertools import count
 from pathlib import Path
 from traceback import format_exception
 
@@ -8,6 +9,7 @@ from AlbertoX3 import (
     get_config_values,
     AllColors,
     TOKEN,
+    db,
 )
 
 from dis_snek import (
@@ -55,7 +57,7 @@ for scale in Config.SCALES:
 
 
 async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
-    await ctx.send(
+    msg = await ctx.send(
         embed=Embed(
             color=AllColors.error,
             title="An internal error occurred :(",
@@ -67,16 +69,16 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
         ),
     )
     to_ping = "".join(f"<@{c[0]}>" for c in Config.CONTRIBUTORS)
-    f = Path(__file__).parent / f"tmp/{ctx.message.id}.log"
+    f = Path(__file__).parent / f"tmp/{count()}.log"
     f.write_text("".join(format_exception(error)), encoding="utf-8")  # type: ignore
     embed = Embed(
-        description=f"**An error occurred [__here__]({ctx.message.jump_url}).**",
+        description=f"**An error occurred [here]({msg.jump_url}).**",
         color=AllColors.error,
     )
     embed.add_field("Guild", ctx.guild.name, True)
     embed.add_field("Channel", ctx.channel.mention, True)
     embed.add_field("User", ctx.author.mention, True)
-    await (await bot.get_channel(945784138416418907)).send(
+    await (await bot.fetch_channel(945784138416418907)).send(
         content=f"||{to_ping}||",
         embed=embed,
         file=File(f, "traceback.py"),
@@ -88,4 +90,5 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
 bot.on_command_error = on_command_error
 
 
+bot.loop.run_until_complete(db.create_tables())
 bot.start(TOKEN)

@@ -1,4 +1,8 @@
 __all__ = (
+    "select",
+    "filter_by",
+    "exists",
+    "delete",
     "Base",
     "UTCDatetime",
     "DB",
@@ -81,7 +85,7 @@ def delete(table) -> Delete:
 
 
 class Base(metaclass=DeclarativeMeta):
-    __table__: str
+    __tablename__: str
     __abstract__ = True
     registry = registry()
     metadata = registry.metadata
@@ -182,8 +186,7 @@ class DB:
         """
         logger.debug("Creating tables")
 
-        d: Base
-        tables = [d.__table__ for d in get_subclasses_in_scales(Base)]
+        tables = [d.__table__ for d in get_subclasses_in_scales(Base)]  # type: ignore
 
         async with self.engine.begin() as conn:
             await conn.run_sync(partial(Base.metadata.create_all, tables=tables))
@@ -196,13 +199,13 @@ class DB:
         await self.session.delete(obj)
         return obj
 
-    async def exec(self, statement: Executable, *args, **kwargs):  # noqa
+    async def exec(self, statement: Executable, *args, **kwargs):
         return await self.session.execute(statement, *args, **kwargs)
 
     async def stream(self, statement: Executable, *args, **kwargs):
         return (await self.session.stream(statement, *args, **kwargs)).scalars()
 
-    async def all(self, statement: Executable, *args, **kwargs):  # noqa
+    async def all(self, statement: Executable, *args, **kwargs):
         return [x async for x in await self.stream(statement, *args, **kwargs)]
 
     async def first(self, statement: Executable, *args, **kwargs):

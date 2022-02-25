@@ -18,6 +18,7 @@ from dis_snek import (
 )
 
 from .colors import Colors
+from .models import DBKick
 
 
 class Kick(Scale):
@@ -33,6 +34,7 @@ class Kick(Scale):
         )
 
         if who is not None:
+            await DBKick.add(who.id, ctx.author.id, reason)
             embed.description = (
                 f"You tried to kick `{who}` with following reason: `{reason}`"
             )

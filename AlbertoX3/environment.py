@@ -24,7 +24,7 @@ load_dotenv()
 TOKEN = environ["TOKEN"]
 
 DB_DRIVER = getenv("DB_DRIVER", "mysql+aiomysql")
-DB_HOST = getenv("DB_HOST", "127.0.0.1")
+DB_HOST = getenv("DB_HOST", "localhost")
 DB_PORT = int(getenv("DB_PORT", 3306))
 DB_DATABASE = getenv("DB_DATABASE", "AlbertoX3")
 

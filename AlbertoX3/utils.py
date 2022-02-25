@@ -39,14 +39,14 @@ async def get_member(
         case Member():
             return raw
         case User():
-            return await ctx.bot.get_member(raw.id, ctx.guild_id)
+            return await ctx.bot.fetch_member(raw.id, ctx.guild_id)
         case int() | _ if str(raw).isnumeric():
-            return await ctx.bot.get_member(raw, ctx.guild_id)
+            return await ctx.bot.fetch_member(raw, ctx.guild_id)
         case str():
             # mention?
             mention = re.findall(r"^<?@?!?([0-9]{15,20})>?$", raw)
             if mention:
-                return await ctx.bot.get_member(mention[0], ctx.guild_id)
+                return await ctx.bot.fetch_member(mention[0], ctx.guild_id)
 
             # name#discriminator?
             if len(raw) > 5 and raw[-5] == "#":
@@ -105,12 +105,12 @@ async def get_user(
         case User():
             return raw
         case int() | _ if str(raw).isnumeric():
-            return await ctx.bot.get_user(raw)
+            return await ctx.bot.fetch_user(raw)
         case str():
             # mention?
             mention = re.findall(r"^<?@?!?([0-9]{15,20})>?$", raw)
             if mention:
-                return await ctx.bot.get_user(mention[0])
+                return await ctx.bot.fetch_user(mention[0])
 
             # name#discriminator?
             if len(raw) > 5 and raw[-5] == "#":
@@ -207,8 +207,6 @@ def get_subclasses_in_scales(
 
         scales = Config.SCALES
     scales = set([scale.package for scale in scales])
-    print(scales)
-    print(base.__subclasses__())
     return [
         cls
         for cls in base.__subclasses__()

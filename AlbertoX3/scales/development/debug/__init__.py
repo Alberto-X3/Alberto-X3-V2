@@ -5,10 +5,16 @@ __all__ = (
 
 
 from dis_snek.ext.debug_scale import DebugScale, debug_embed, InteractionContext  # noqa
+from dis_snek.ext.paginators import Paginator
 from dis_snek import (
     Snake,
     Scale,
+    SlashCommandOption,
+    OptionTypes,
 )
+
+from AlbertoX3.database import Base, db, select, db_wrapper
+from AlbertoX3.utils import get_subclasses_in_scales as gsis
 
 
 class Debug(DebugScale, Scale):
@@ -23,6 +29,26 @@ class Debug(DebugScale, Scale):
 
         e.description = get_config_values()
         await ctx.send(embeds=[e])
+
+    @DebugScale.debug_info.subcommand(
+        "database",
+        options=[SlashCommandOption("table", OptionTypes.STRING)],
+        sub_cmd_description="Get information about the database",
+    )
+    @db_wrapper
+    async def database_info(self, ctx: InteractionContext) -> None:
+        await ctx.defer()
+
+        res = []
+        for t in gsis(Base):
+            if t.__tablename__ == ctx.kwargs["table"]:  # type: ignore
+                for r in await db.exec(select(t.__table__)):  # type: ignore
+                    res.append(str(r))
+                break
+
+        await Paginator.create_from_string(
+            self.bot, "\n".join(res or ["Empty!"]), "```", "```"
+        ).send(ctx)
 
 
 def setup(bot: Snake):
