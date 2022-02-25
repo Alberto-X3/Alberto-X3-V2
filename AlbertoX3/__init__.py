@@ -9,7 +9,6 @@ from .colors import *
 from .config import *
 from .database import *
 from .environment import *
-from .models import *
 from .permissions import *
 from .settings import *
 from .translations import *

@@ -13,8 +13,7 @@ Project
 │   │       │   ├── colors.py
 │   │       │   ├── models.py
 │   │       │   ├── permissions.py
-│   │       │   ├── settings.py
-│   │       │   └── types.py  # for types which aren't part of `typing`
+│   │       │   └── settings.py
 │   │       └── __init__.py
 │   ├── __init__.py
 │   ├── __main__.py
@@ -22,7 +21,6 @@ Project
 │   ├── config.py
 │   ├── database.py
 │   ├── environment.py
-│   ├── models.py
 │   ├── permissions.py
 │   ├── settings.py
 │   ├── translations.py
