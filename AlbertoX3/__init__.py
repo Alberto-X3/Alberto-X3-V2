@@ -5,6 +5,7 @@ __copyright__ = f"Copyright 2021-present (c) {__author__} - Alberto-X3"
 __url__ = "https://github.com/Alberto-X3/Alberto-X3-V2"
 
 
+from .aio import *
 from .colors import *
 from .config import *
 from .database import *

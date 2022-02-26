@@ -10,9 +10,11 @@ __all__ = (
     "db_wrapper",
     "get_database",
     "db",
+    "redis",
 )
 
 
+from aioredis import Redis
 from asyncio import Event
 from contextlib import asynccontextmanager
 from contextvars import ContextVar
@@ -26,7 +28,7 @@ from sqlalchemy.sql import Executable
 from sqlalchemy.sql.expression import exists as sa_exists, delete as sa_delete, Delete
 from sqlalchemy.sql.functions import count
 from sqlalchemy.sql.selectable import Exists
-from sqlalchemy import TypeDecorator, DateTime
+from sqlalchemy import TypeDecorator, DateTime, Table
 from typing import TypeVar, Type
 
 from AlbertUnruhUtils.utils.logger import get_logger
@@ -42,16 +44,27 @@ from .environment import (
     DB_POOL_SIZE,
     DB_POOL_MAX_OVERFLOW,
     DB_SHOW_SQL_STATEMENTS,
+    REDIS_DB,
+    REDIS_HOST,
+    REDIS_PORT,
+    REDIS_PASSWORD,
 )
-from .utils import get_subclasses_in_scales
 
 
 T = TypeVar("T")
 logger = get_logger(__name__.split(".")[-1], level=None, add_handler=False)
 
 
+redis: Redis = Redis(
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    db=REDIS_DB,
+    password=REDIS_PASSWORD,
+)
+
+
 # Note:
-# the whole file is "inspired" by https://github.com/PyDrocsid/library/blob/develop/PyDrocsid/database.py
+# this file is "inspired" by https://github.com/PyDrocsid/library/blob/develop/PyDrocsid/database.py
 
 
 def select(entity, *args) -> Select:
@@ -85,6 +98,7 @@ def delete(table) -> Delete:
 
 
 class Base(metaclass=DeclarativeMeta):
+    __table__: Table
     __tablename__: str
     __abstract__ = True
     registry = registry()
@@ -184,9 +198,12 @@ class DB:
         """
         Creates all tables for the scales.
         """
-        logger.debug("Creating tables")
+        tables = [d.__table__ for d in Base.__subclasses__()]  # type: ignore
 
-        tables = [d.__table__ for d in get_subclasses_in_scales(Base)]  # type: ignore
+        logger.debug(
+            f"Creating following tables (if they don't exist): "
+            f"{', '.join(map(lambda t: t.name, tables))}"
+        )
 
         async with self.engine.begin() as conn:
             await conn.run_sync(partial(Base.metadata.create_all, tables=tables))

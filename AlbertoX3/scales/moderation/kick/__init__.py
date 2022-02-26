@@ -19,7 +19,7 @@ from dis_snek import (
 )
 
 from .colors import Colors
-from .models import DBKick
+from .models import KickModel
 
 
 tg = t.g
@@ -40,7 +40,7 @@ class Kick(Scale):
         )
 
         if who is not None:
-            await DBKick.add(who.id, ctx.author.id, reason)
+            await KickModel.add(who.id, ctx.author.id, reason)
             embed.description = t.kicked(user=who, reason=reason)
             embed.color = Colors.kicked
         else:

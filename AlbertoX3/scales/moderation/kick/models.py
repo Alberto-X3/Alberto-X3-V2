@@ -4,7 +4,7 @@ from sqlalchemy import Column, Integer, BigInteger, Text
 from AlbertoX3.database import Base, UTCDatetime, db, db_wrapper
 
 
-class DBKick(Base):
+class KickModel(Base):
     __tablename__ = "kick"
 
     id: Column | int = Column(
@@ -17,9 +17,9 @@ class DBKick(Base):
 
     @staticmethod
     @db_wrapper
-    async def add(member: int, executor: int, reason: str) -> "DBKick":
+    async def add(member: int, executor: int, reason: str) -> "KickModel":
         return await db.add(
-            DBKick(
+            KickModel(
                 member=member,
                 executor=executor,
                 timestamp=datetime.utcnow(),

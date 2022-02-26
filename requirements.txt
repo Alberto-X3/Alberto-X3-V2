@@ -1,7 +1,10 @@
+aenum~=3.1.8
 aiomysql~=0.0.22
+aioredis~=2.0.1
 AlbertUnruhUtils.py~=2.1.0
 cryptography~=36.0.1
 dis-snek~=7.0.0
+orjson~=3.6.7
 SQLAlchemy~=1.4.31
 python-dotenv~=0.19.2
 PyYAML~=6.0
