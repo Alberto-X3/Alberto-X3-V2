@@ -45,6 +45,10 @@ class Debug(DebugScale, Scale):
                 for r in await db.exec(select(t.__table__)):  # type: ignore
                     res.append(str(r))
                 break
+        else:
+            p = ", ".join(t.__tablename__ for t in gsis(Base))  # type: ignore
+            res.append(f"Can't find table {ctx.kwargs['table']!r}")
+            res.append(f"Possible tables are: {p}")
 
         await Paginator.create_from_string(
             self.bot, "\n".join(res or ["Empty!"]), "```", "```", 2000, 300
