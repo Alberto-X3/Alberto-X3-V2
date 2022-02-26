@@ -15,7 +15,7 @@ from .types import PrimitiveScale
 from .utils import get_language
 
 
-logger = get_logger(__name__.split(".")[-1])
+logger = get_logger(__name__.split(".")[-1], level=None, add_handler=False)
 
 
 def merge(
