@@ -4,14 +4,15 @@ __all__ = (
     "get_user",
     "get_bool",
     "get_subclasses_in_scales",
+    "get_language",
 )
 
 
 import re
 import sys
 
-from dis_snek import Context, User, Member
 from typing import TypeVar, Type
+from dis_snek import Context, User, Member, Snowflake_Type
 
 from .types import PrimitiveScale
 
@@ -206,9 +207,22 @@ def get_subclasses_in_scales(
         from .config import Config
 
         scales = Config.SCALES
+
     scales = set([scale.package for scale in scales])
     return [
         cls
         for cls in base.__subclasses__()
         if sys.modules[cls.__module__].__package__ in scales
     ]
+
+
+def get_language(
+    *,
+    guild: Snowflake_Type = None,
+    user: Snowflake_Type = None,
+) -> str | None:
+    assert not (
+        guild is not None and user is not None
+    ), "Can't have both 'guild' and 'user' set!"
+    # ToDo: connect to database
+    return None

@@ -175,7 +175,11 @@ def get_scales(
     for folder in cur_path.iterdir():
         if folder.is_file():
             if folder.name == scale_marker:
-                scales.add(PrimitiveScale(name=folder.parent.name, package=cur_mod))
+                scales.add(
+                    PrimitiveScale(
+                        name=folder.parent.name, package=cur_mod, path=folder.parent
+                    )
+                )
             continue
 
         if folder.name.startswith("_"):

@@ -47,7 +47,7 @@ from .utils import get_subclasses_in_scales
 
 
 T = TypeVar("T")
-logger = get_logger("database")
+logger = get_logger(__name__.split(".")[-1])
 
 
 # Note:

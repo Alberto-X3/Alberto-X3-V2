@@ -10,6 +10,8 @@ from AlbertoX3 import (
     AllColors,
     TOKEN,
     db,
+    load_translations,
+    t,
 )
 
 from dis_snek import (
@@ -25,7 +27,6 @@ from dis_snek import (
 )
 
 
-get_logger("asyncio").setLevel("INFO")
 logger = get_logger(None)
 
 
@@ -33,6 +34,8 @@ config_path = Path(__file__).parent.parent / "config.yml"
 logger.debug(f"Loading Config from {config_path.absolute()}")
 load_config_file(config_path)
 logger.info(f"Config has now following values: \n{get_config_values()}")
+
+load_translations()
 
 
 bot = Snake(
@@ -60,7 +63,7 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
     msg = await ctx.send(
         embed=Embed(
             color=AllColors.error,
-            title="An internal error occurred :(",
+            title=t.g.internal_error,
             footer=EmbedFooter(
                 icon_url=bot.user.avatar.url,
                 text=Config.NAME,
