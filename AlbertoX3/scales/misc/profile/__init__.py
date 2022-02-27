@@ -46,8 +46,13 @@ def create_ukraine_flag():
         The Ukraine flag (4096x4096).
     """
     img = Image.new("RGBA", (4096, 4096), (0, 0, 0, 0))
-    img.paste(Image.new("RGB", (4096, 4096 // 2), (0, 91, 188)), (0, 4096 // 2 * 0))
-    img.paste(Image.new("RGB", (4096, 4096 // 2), (255, 214, 0)), (0, 4096 // 2 * 1))
+    rows = [
+        (0, 91, 188),
+        (255, 214, 0),
+    ]
+    payload = "RGB", (4096, 4096 // len(rows))
+    for i, row in enumerate(rows):
+        img.paste(Image.new(*payload, row), (0, 4096 // len(rows) * i))  # type: ignore
     img.save(Profile.pattern_folder / "ukraine.png")
     return img
 
@@ -61,13 +66,18 @@ def create_rainbow_flag():
     Image.Image
         The Rainbow flag (4096x4096).
     """
-    img = Image.new("RGBA", (4096, 4096), (0, 0, 0, 0,))
-    img.paste(Image.new("RGB", (4096, 4096 // 6), (228, 3, 3)), (0, 4096 // 6 * 0))
-    img.paste(Image.new("RGB", (4096, 4096 // 6), (255, 140, 0)), (0, 4096 // 6 * 1))
-    img.paste(Image.new("RGB", (4096, 4096 // 6), (255, 237, 0)), (0, 4096 // 6 * 2))
-    img.paste(Image.new("RGB", (4096, 4096 // 6), (0, 128, 38)), (0, 4096 // 6 * 3))
-    img.paste(Image.new("RGB", (4096, 4096 // 6), (0, 77, 255)), (0, 4096 // 6 * 4))
-    img.paste(Image.new("RGB", (4096, 4096 // 6), (117, 7, 135)), (0, 4096 // 6 * 5))
+    img = Image.new("RGBA", (4096, 4096), (0, 0, 0, 0))
+    payload = "RGB", (4096, 4096 // 6)
+    rows = [
+        (228, 3, 3),
+        (255, 140, 0),
+        (255, 237, 0),
+        (0, 128, 38),
+        (0, 77, 255),
+        (117, 7, 135),
+    ]
+    for i, row in enumerate(rows):
+        img.paste(Image.new(*payload, row), (0, 4096 // len(rows) * i))  # type: ignore
     img.save(Profile.pattern_folder / "rainbow.png")
     return img
 
