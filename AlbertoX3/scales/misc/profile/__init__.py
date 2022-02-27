@@ -59,7 +59,7 @@ class Profile(Scale):
         for i, arg in enumerate(args):
             if arg.startswith("user::"):
                 if arg == "user::":
-                    user = args.pop(i+1)
+                    user = args.pop(i + 1)
                     args.pop(i)
                 else:
                     user = args.pop(i).removeprefix("user::")
