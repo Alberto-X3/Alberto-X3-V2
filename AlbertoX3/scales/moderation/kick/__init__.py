@@ -4,9 +4,6 @@ __all__ = (
 )
 
 
-from AlbertoX3.translations import t
-from AlbertoX3.utils import get_member
-
 from dis_snek import (
     Snake,
     Scale,
@@ -18,6 +15,9 @@ from dis_snek import (
     EmbedFooter,
 )
 
+from AlbertoX3.translations import t
+from AlbertoX3.utils import get_member
+
 from .colors import Colors
 from .models import KickModel
 
@@ -28,7 +28,11 @@ t = t.kick
 
 class Kick(Scale):
     @message_command()
-    async def kick(self, ctx: Context, who: str, *reason: str):
+    async def kick(self, ctx: Context):
+        args = ctx.args.copy()
+        who = args.pop(0) if args else ""
+        reason = args
+
         reason = " ".join(reason) or tg.no_reason
         who: Member = await get_member(ctx, who)
         embed = Embed(

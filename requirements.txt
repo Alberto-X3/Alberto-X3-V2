@@ -6,5 +6,6 @@ cryptography~=36.0.1
 dis-snek~=7.0.0
 orjson~=3.6.7
 SQLAlchemy~=1.4.31
+Pillow~=9.0.1
 python-dotenv~=0.19.2
 PyYAML~=6.0

@@ -73,6 +73,7 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
     )
     to_ping = "".join(f"<@{c[0]}>" for c in Config.CONTRIBUTORS)
     f = Path(__file__).parent / f"tmp/{count()}.log"
+    f.parent.mkdir(exist_ok=True)
     f.write_text("".join(format_exception(error)), encoding="utf-8")  # type: ignore
     embed = Embed(
         description=f"**An error occurred [here]({msg.jump_url}).**",

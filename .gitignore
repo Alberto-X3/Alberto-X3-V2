@@ -1,6 +1,6 @@
 __pycache__/
 .idea/
-AlbertoX3/tmp/
+tmp/
 
 *.log
 *.env
