@@ -4,8 +4,6 @@ __all__ = (
 )
 
 
-from sqlalchemy import MetaData
-
 from dis_snek.ext.debug_scale import DebugScale, debug_embed, InteractionContext  # noqa
 from dis_snek.ext.paginators import Paginator
 from dis_snek import (
