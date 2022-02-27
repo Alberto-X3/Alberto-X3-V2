@@ -7,3 +7,6 @@ tmp/
 
 Pipfile
 Pipfile.lock
+
+# will be created on startup
+AlbertoX3/scales/misc/profile/patterns/*.png

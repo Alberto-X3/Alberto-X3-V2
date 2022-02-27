@@ -4,7 +4,9 @@ __all__ = (
 )
 
 
+from AlbertUnruhUtils.utils.logger import get_logger
 from asyncio import sleep
+from itertools import count
 from pathlib import Path
 from PIL import Image, ImageEnhance
 
@@ -30,6 +32,9 @@ from .colors import Colors
 tg = t.g
 t = t.profile
 
+count = count()
+logger = get_logger(__name__.split(".")[-1], level=None, add_handler=False)
+
 
 def create_ukraine_flag():
     """
@@ -40,10 +45,46 @@ def create_ukraine_flag():
     Image.Image
         The Ukraine flag (4096x4096).
     """
-    img = Image.new("RGB", (4096, 4096), (0, 91, 188, 100))
-    img.paste(Image.new("RGB", (4096, 4096 // 2), (255, 214, 0, 100)), (0, 4096 // 2))
+    img = Image.new("RGBA", (4096, 4096), (0, 0, 0, 0))
+    img.paste(Image.new("RGB", (4096, 4096 // 2), (0, 91, 188)), (0, 4096 // 2 * 0))
+    img.paste(Image.new("RGB", (4096, 4096 // 2), (255, 214, 0)), (0, 4096 // 2 * 1))
     img.save(Profile.pattern_folder / "ukraine.png")
     return img
+
+
+def create_rainbow_flag():
+    """
+    Little helper-function.
+
+    Returns
+    -------
+    Image.Image
+        The Rainbow flag (4096x4096).
+    """
+    img = Image.new("RGBA", (4096, 4096), (0, 0, 0, 0,))
+    img.paste(Image.new("RGB", (4096, 4096 // 6), (228, 3, 3)), (0, 4096 // 6 * 0))
+    img.paste(Image.new("RGB", (4096, 4096 // 6), (255, 140, 0)), (0, 4096 // 6 * 1))
+    img.paste(Image.new("RGB", (4096, 4096 // 6), (255, 237, 0)), (0, 4096 // 6 * 2))
+    img.paste(Image.new("RGB", (4096, 4096 // 6), (0, 128, 38)), (0, 4096 // 6 * 3))
+    img.paste(Image.new("RGB", (4096, 4096 // 6), (0, 77, 255)), (0, 4096 // 6 * 4))
+    img.paste(Image.new("RGB", (4096, 4096 // 6), (117, 7, 135)), (0, 4096 // 6 * 5))
+    img.save(Profile.pattern_folder / "rainbow.png")
+    return img
+
+
+def create_all_flags():
+    """
+    Creates every flag.
+    """
+    import re
+
+    flag_creator = re.compile(r"^create_([a-z]+)_flag$")
+
+    for name, func in globals().items():
+        if callable(func):
+            if match := flag_creator.search(name):
+                logger.debug(f"Creating flag {match.group(1)}")
+                func()
 
 
 class Profile(Scale):
@@ -97,15 +138,15 @@ class Profile(Scale):
         msg = await ctx.reply(
             embed=Embed(description=t.progress.downloading, **embed_data)
         )
-        await sleep(0.3)  # ratelimits...
-        f = Path(__file__).parent / f"tmp/{ctx.author.id}-{pattern}.png"
+        await sleep(0.4)  # ratelimits...
+        f = Path(__file__).parent / f"tmp/{next(count)}.png"
         await user.avatar.save(f, size=4096)
 
         # prepare profile
         await msg.edit(
             embed=Embed(description=t.progress.preparing.profile, **embed_data)
         )
-        await sleep(0.3)  # ratelimits...
+        await sleep(0.4)  # ratelimits...
         img: Image.Image = await run_in_thread(Image.open, f)
         img = await run_in_thread(img.convert, "L")
         img = await run_in_thread(img.resize, (4096, 4096))
@@ -116,7 +157,7 @@ class Profile(Scale):
                 description=t.progress.preparing.pattern(pattern=pattern), **embed_data
             )
         )
-        await sleep(0.3)  # ratelimits...
+        await sleep(0.4)  # ratelimits...
         img_p: Image.Image = await run_in_thread(
             Image.open, self.pattern_folder / f"{pattern}.png"
         )
@@ -124,7 +165,7 @@ class Profile(Scale):
 
         # create result
         await msg.edit(embed=Embed(description=t.progress.creating, **embed_data))
-        await sleep(0.3)  # ratelimits...
+        await sleep(0.4)  # ratelimits...
         img_p = await run_in_thread(
             Image.composite,
             Image.new("RGBA", (4096, 4096), (255 * negative,) * 4),
@@ -165,3 +206,4 @@ class Profile(Scale):
 
 def setup(bot: Snake):
     Profile(bot)
+    create_all_flags()

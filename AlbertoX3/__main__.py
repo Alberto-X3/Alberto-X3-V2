@@ -28,6 +28,7 @@ from dis_snek import (
 
 
 logger = get_logger(None)
+count = count()
 
 
 config_path = Path(__file__).parent.parent / "config.yml"
@@ -72,7 +73,7 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
         ),
     )
     to_ping = "".join(f"<@{c[0]}>" for c in Config.CONTRIBUTORS)
-    f = Path(__file__).parent / f"tmp/{count()}.log"
+    f = Path(__file__).parent / f"tmp/{next(count)}.log"
     f.parent.mkdir(exist_ok=True)
     f.write_text("".join(format_exception(error)), encoding="utf-8")  # type: ignore
     embed = Embed(
