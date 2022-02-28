@@ -1,6 +1,6 @@
 new_picture: Here is your updated profile picture.
-invalid_pattern: "Invalid pattern {given!r}, use on of these instead: {available}"
-invalid_saturation_boost: Invalid saturation boost! Must be a float and in range from `-100.0` to `100.0`
+invalid_pattern: "Invalid pattern {given!r}, use on of these instead: {available}."
+invalid_opacity: Invalid opacity! Must be a number in range from `0.0` to `100.0`.
 progress:
   downloading: Downloading profile picture...
   preparing:

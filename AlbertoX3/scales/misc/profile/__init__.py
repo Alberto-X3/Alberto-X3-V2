@@ -8,7 +8,7 @@ from AlbertUnruhUtils.utils.logger import get_logger
 from asyncio import sleep
 from itertools import count
 from pathlib import Path
-from PIL import Image, ImageEnhance
+from PIL import Image
 
 from dis_snek import (
     Scale,
@@ -50,9 +50,9 @@ def create_ukraine_flag():
         (0, 91, 188),
         (255, 214, 0),
     ]
-    payload = "RGB", (4096, 4096 // len(rows))
+    payload = "RGBA", (4096, 4096 // len(rows))
     for i, row in enumerate(rows):
-        img.paste(Image.new(*payload, row), (0, 4096 // len(rows) * i))  # type: ignore
+        img.paste(Image.new(*payload, row + (255,)), (0, 4096 // len(rows) * i))  # type: ignore
     img.save(Profile.pattern_folder / "ukraine.png")
     return img
 
@@ -67,7 +67,6 @@ def create_rainbow_flag():
         The Rainbow flag (4096x4096).
     """
     img = Image.new("RGBA", (4096, 4096), (0, 0, 0, 0))
-    payload = "RGB", (4096, 4096 // 6)
     rows = [
         (228, 3, 3),
         (255, 140, 0),
@@ -76,8 +75,9 @@ def create_rainbow_flag():
         (0, 77, 255),
         (117, 7, 135),
     ]
+    payload = "RGBA", (4096, 4096 // len(rows))
     for i, row in enumerate(rows):
-        img.paste(Image.new(*payload, row), (0, 4096 // len(rows) * i))  # type: ignore
+        img.paste(Image.new(*payload, row + (255,)), (0, 4096 // len(rows) * i))  # type: ignore
     img.save(Profile.pattern_folder / "rainbow.png")
     return img
 
@@ -105,8 +105,6 @@ class Profile(Scale):
     async def profile(self, ctx: MessageContext):
         args = ctx.args.copy()
         pattern = args.pop(0) if args else ""
-        if not (negative := "negative" not in args):  # is weird, but works
-            args.remove("negative")
         for i, arg in enumerate(args):
             if arg.startswith("user::"):
                 if arg == "user::":
@@ -119,7 +117,7 @@ class Profile(Scale):
         else:
             user = ctx.author
             user = getattr(user, "user", user)
-        saturation_boost = args.pop(0) if args else "1"
+        opacity = args.pop(0) if args else "50"
 
         assert pattern in (
             available := list(
@@ -129,10 +127,10 @@ class Profile(Scale):
             )
         ), t.invalid_pattern(available=", ".join(available), given=pattern)
         assert (
-            saturation_boost.removeprefix("-").replace(".", "").isnumeric()
-            and saturation_boost.count(".") <= 1
-            and -100 <= (saturation_boost := float(saturation_boost)) <= 100
-        ), t.invalid_saturation_boost
+            opacity.removeprefix("-").replace(".", "").isnumeric()
+            and opacity.count(".") <= 1
+            and 0 <= (opacity := float(opacity)) <= 100
+        ), t.invalid_opacity
         assert user is not None, tg.not_found.user
 
         embed_data = Embed(
@@ -158,7 +156,8 @@ class Profile(Scale):
         )
         await sleep(0.4)  # ratelimits...
         img: Image.Image = await run_in_thread(Image.open, f)
-        img = await run_in_thread(img.convert, "L")
+        img = await run_in_thread(img.convert, "LA")
+        img = await run_in_thread(img.convert, "RGBA")
         img = await run_in_thread(img.resize, (4096, 4096))
 
         # prepare pattern
@@ -176,16 +175,10 @@ class Profile(Scale):
         # create result
         await msg.edit(embed=Embed(description=t.progress.creating, **embed_data))
         await sleep(0.4)  # ratelimits...
-        img_p = await run_in_thread(
-            Image.composite,
-            Image.new("RGBA", (4096, 4096), (255 * negative,) * 4),
-            img_p,
-            img,
-        )
-        img_p = await run_in_thread(ImageEnhance.Color(img_p).enhance, saturation_boost)
+        img = await run_in_thread(Image.blend, img, img_p, opacity / 100)
 
         # send result
-        img_p.save(f)
+        img.save(f)
         await msg.edit(
             file=File(f, f"{pattern}.png"),
             embed=Embed(
