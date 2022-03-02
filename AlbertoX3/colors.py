@@ -11,7 +11,7 @@ from yaml import safe_load
 
 class NestedInt(int):
     """
-    Integer with read-only dictionary.
+    Integer with a read-only dictionary.
     """
 
     _values: dict[str | int, int] = {}

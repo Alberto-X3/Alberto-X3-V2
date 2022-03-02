@@ -100,6 +100,7 @@ def create_all_flags():
 class Profile(Scale):
     pattern_folder = Path(__file__).parent / "patterns"
     pattern_folder.mkdir(exist_ok=True)
+    (Path(__file__).parent / "tmp").mkdir(exist_ok=True)
 
     @message_command("profile")
     async def profile(self, ctx: MessageContext):
@@ -146,7 +147,7 @@ class Profile(Scale):
         msg = await ctx.reply(
             embed=Embed(description=t.progress.downloading, **embed_data)
         )
-        await sleep(0.4)  # ratelimits...
+        await sleep(0.4)  # rate-limits...
         f = Path(__file__).parent / f"tmp/{next(count)}.png"
         await user.avatar.save(f, size=4096)
 
@@ -154,7 +155,7 @@ class Profile(Scale):
         await msg.edit(
             embed=Embed(description=t.progress.preparing.profile, **embed_data)
         )
-        await sleep(0.4)  # ratelimits...
+        await sleep(0.4)  # rate-limits...
         img: Image.Image = await run_in_thread(Image.open, f)
         img = await run_in_thread(img.convert, "LA")
         img = await run_in_thread(img.convert, "RGBA")
@@ -166,7 +167,7 @@ class Profile(Scale):
                 description=t.progress.preparing.pattern(pattern=pattern), **embed_data
             )
         )
-        await sleep(0.4)  # ratelimits...
+        await sleep(0.4)  # rate-limits...
         img_p: Image.Image = await run_in_thread(
             Image.open, self.pattern_folder / f"{pattern}.png"
         )
@@ -174,7 +175,7 @@ class Profile(Scale):
 
         # create result
         await msg.edit(embed=Embed(description=t.progress.creating, **embed_data))
-        await sleep(0.4)  # ratelimits...
+        await sleep(0.4)  # rate-limits...
         img = await run_in_thread(Image.blend, img, img_p, opacity / 100)
 
         # send result

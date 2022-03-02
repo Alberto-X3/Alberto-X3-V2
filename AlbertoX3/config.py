@@ -139,7 +139,7 @@ def load_language(config: dict):
 def load_scales(config: dict, path: Path = Path.cwd()):
     Config.SCALES_FOLDER_RAW = config["scale"]["folder"]
     folder = Path(Config.SCALES_FOLDER_RAW)
-    if not folder.is_absolute():  # relative path is given
+    if not folder.is_absolute():  # a relative path is given
         folder = path / folder
     Config.SCALES_FOLDER = folder
     Config.SCALES = get_scales()
