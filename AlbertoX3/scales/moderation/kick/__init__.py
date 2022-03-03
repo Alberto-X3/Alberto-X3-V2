@@ -7,7 +7,7 @@ __all__ = (
 from dis_snek import (
     Snake,
     Scale,
-    Context,
+    MessageContext,
     Member,
     message_command,
     Embed,
@@ -28,7 +28,7 @@ t = t.kick
 
 class Kick(Scale):
     @message_command()
-    async def kick(self, ctx: Context):
+    async def kick(self, ctx: MessageContext):
         args = ctx.args.copy()
         who = args.pop(0) if args else ""
         reason = args
