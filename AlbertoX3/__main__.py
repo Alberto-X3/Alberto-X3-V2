@@ -9,6 +9,7 @@ from AlbertoX3 import (
     get_config_values,
     AllColors,
     TOKEN,
+    LOG_LEVEL,
     db,
     load_translations,
     t,
@@ -27,11 +28,11 @@ from dis_snek import (
 )
 
 
-logger = get_logger(None)
+logger = get_logger(None, level=LOG_LEVEL)
 count = count()
 
 
-config_path = Path(__file__).parent.parent / "config.yml"
+config_path = Path.cwd() / "config.yml"
 logger.debug(f"Loading Config from {config_path.absolute()}")
 load_config_file(config_path)
 logger.info(f"Config has now following values: \n{get_config_values()}")

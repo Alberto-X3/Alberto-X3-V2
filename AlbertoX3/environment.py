@@ -1,5 +1,6 @@
 __all__ = (
     "TOKEN",
+    "LOG_LEVEL",
     "DB_DRIVER",
     "DB_HOST",
     "DB_PORT",
@@ -29,6 +30,10 @@ load_dotenv()
 
 TOKEN = environ["TOKEN"]
 
+LOG_LEVEL = environ.get("LOG_LEVEL", "NOTSET")
+if LOG_LEVEL.isnumeric():
+    LOG_LEVEL = int(LOG_LEVEL)
+
 DB_DRIVER = getenv("DB_DRIVER", "mysql+aiomysql")
 DB_HOST = getenv("DB_HOST", "localhost")
 DB_PORT = int(getenv("DB_PORT", 3306))
@@ -48,4 +53,4 @@ CACHE_TTL = int(getenv("CACHE_TTL", 3600))
 REDIS_HOST = getenv("REDIS_HOST", "localhost")
 REDIS_PORT = int(getenv("REDIS_PORT", 6379))
 REDIS_DB = int(getenv("REDIS_DB", 0))
-REDIS_PASSWORD = getenv("REDIS_PASSWORD", None)
+REDIS_PASSWORD = getenv("REDIS_PASSWORD", "")
