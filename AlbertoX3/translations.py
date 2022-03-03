@@ -77,6 +77,9 @@ class TranslationDict(dict):
 
         return value
 
+    def __contains__(self, item):
+        return super().__contains__(item) or self._fallback.__contains__(item)
+
 
 class TranslationNamespace:
     _sources: list[Path]
