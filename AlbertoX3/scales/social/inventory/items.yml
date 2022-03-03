@@ -1,0 +1,6 @@
+0:
+  max_available: 3
+1:
+  max_available: 3
+2:
+  max_available: null

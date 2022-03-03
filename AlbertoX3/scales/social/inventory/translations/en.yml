@@ -1,0 +1,20 @@
+inventory: "Your inventory:"
+item:
+  id: "ID: {id}"
+  name: "Name: {name}"
+  description: "Description: {description}"
+  cuantity:
+    one: "`{cnt}` item available."
+    many: "`{cnt}` items available."
+    zero: No items available.
+  not_found: "Can't find the item `{item}`"
+items:
+  "0":
+    name: Briefcase o' money
+    description: Adds 10% of the global money to the owner and disappears *forever*.
+  "1":
+    name: Briefcase o' luck
+    description: Just very *very* rare.
+  "2":
+    name: Golden Banhammer
+    description: Makes all bans shiny.
