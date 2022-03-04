@@ -20,7 +20,7 @@ from dis_snek import (
 from AlbertoX3.translations import t
 
 from .colors import Colors
-from .models import ItemModel
+from .models import ItemModel, InventoryModel
 
 
 tg = t.g
@@ -40,7 +40,7 @@ class Inventory(Scale):
 
         info = [t.item.description(description=description)]
         if item.max_available is not None:
-            info.append(t.item.cuantity(cnt=item.max_available))
+            info.append(t.item.quantity(cnt=item.max_available))
         info = "\n\n".join(info)
 
         embed = Embed(
@@ -56,6 +56,38 @@ class Inventory(Scale):
             embed=embed,
         )
 
+    @message_command("inventory")
+    async def inventory(self, ctx: MessageContext):
+        inventory = await InventoryModel.get(ctx.author.id)
+        embed = Embed(
+            description=t.inventory,
+            timestamp=Timestamp.now(),
+            footer=EmbedFooter(
+                text=tg.executed_by(user=ctx.author, id=ctx.author.id),
+                icon_url=ctx.author.display_avatar.url,
+            ),
+            color=Colors.inventory,
+        )
+
+        for inv in sorted(inventory, key=lambda i: i.item):
+            if inv.quantity:
+                t_item = getattr(t.items, str(inv.item))
+                embed.add_field(
+                    f"{t.item.id(id=inv.item)} | {t.item.name(name=t_item.name)}",
+                    f"{t.item.quantity(cnt=inv.quantity)}",
+                )
+
+        if not embed.fields:
+            embed.add_field(
+                f"{t.item.id(id='/')} | {t.item.name(name='/')}",
+                f"{t.item.description(description='/')}",
+            )
+
+        await ctx.reply(
+            embed=embed,
+        )
+
+    @inventory.error
     @item.error
     async def item_error(self, e: Exception, ctx: MessageContext, *_):
         if isinstance(e, AssertionError):

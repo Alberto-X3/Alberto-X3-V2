@@ -3,7 +3,7 @@ item:
   id: "ID: {id}"
   name: "Name: {name}"
   description: "Description: {description}"
-  cuantity:
+  quantity:
     one: "`{cnt}` item available."
     many: "`{cnt}` items available."
     zero: No items available.
