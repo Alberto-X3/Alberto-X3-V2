@@ -1,6 +1,12 @@
 0:
   max_available: 3
+  buyable: false
+  price: null
 1:
   max_available: 3
+  buyable: false
+  price: null
 2:
   max_available: null
+  buyable: true
+  price: 500

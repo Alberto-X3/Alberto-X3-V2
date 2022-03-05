@@ -17,8 +17,15 @@ class MoneyModel(Base):
     async def update(
         user: int,
         amount: int,
+        relative: bool = False,
     ) -> "MoneyModel":
-        inv = await MoneyModel.get(user=user)
+        inv = await db.get(MoneyModel, user=user) or await db.add(
+            MoneyModel(user=user, amount=0)
+        )
+        # similar to MoneyModel.get, but this would
+        # close the connection to the database
+        if relative:
+            amount = inv.amount + amount
         inv.amount = amount
         return inv
 

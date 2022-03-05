@@ -10,3 +10,12 @@ all:
     one: "The market has `{cnt}` {emoji} money."
     many: "The market has `{cnt}` {emoji} money."
     zero: "The market has no {emoji} money."
+percentage_from:
+  market:
+    one: "This is `{cnt:.2f}`% from the market."
+    many: "These are `{cnt:.2f}`% from the market."
+amount:
+  must_be_numeric: Amount must be numeric!
+  must_be_positive: Amount must be higher than `0`!
+to_expensive: "You can't spend `{required}` {emoji_r} money! You only have `{available}` {emoji_a} money."
+transaction: "You paid `{amount}` {emoji} money to {receiver}."

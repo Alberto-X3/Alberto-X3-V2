@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, BigInteger
+from sqlalchemy import Column, Integer, BigInteger, Boolean
 
 from AlbertoX3.database import Base, db, db_wrapper, filter_by
 
@@ -9,17 +9,23 @@ class ItemModel(Base):
     id: Column | int = Column(
         Integer, primary_key=True, unique=True, autoincrement=False, nullable=False
     )
+    buyable: Column | bool = Column(Boolean, nullable=False)
+    price: Column | int = Column(Integer, nullable=True)
     max_available: Column | int | None = Column(Integer, nullable=True)
 
     @staticmethod
     @db_wrapper
     async def add(
         id: int,  # noqa
+        buyable: bool = False,
+        price: int | None = None,
         max_available: int | None = None,
     ) -> "ItemModel":
         return await db.add(
             ItemModel(
                 id=id,
+                buyable=buyable,
+                price=price,
                 max_available=max_available,
             )
         )
@@ -49,7 +55,11 @@ class InventoryModel(Base):
         item: int,
         quantity: int,
     ) -> "InventoryModel":
-        inv = await InventoryModel.get(user=user, item=item)
+        inv = await db.get(InventoryModel, user=user, item=item) or await db.add(
+            InventoryModel(user=user, item=item, quantity=0)
+        )
+        # similar to InventoryModel.get, but this would
+        # close the connection to the database
         inv.quantity = quantity
         return inv
 

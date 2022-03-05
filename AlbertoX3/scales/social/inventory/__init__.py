@@ -108,6 +108,7 @@ class Inventory(Scale):
 
 
 async def create_all_items(items):
+    await __import__("asyncio").sleep(2)  # all tables should be created
     for id in items:  # noqa
         if await ItemModel.get(id) is None:
             await ItemModel.add(id, **items[id])
@@ -115,6 +116,6 @@ async def create_all_items(items):
 
 def setup(bot: Snake):
     Inventory(bot)
-    bot.loop.run_until_complete(
+    bot.loop.create_task(
         create_all_items(safe_load((Path(__file__).parent / "items.yml").read_text()))
     )
