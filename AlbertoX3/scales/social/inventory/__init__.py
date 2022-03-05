@@ -49,6 +49,7 @@ class Inventory(Scale):
                 text=tg.executed_by(user=ctx.author, id=ctx.author.id),
                 icon_url=ctx.author.display_avatar.url,
             ),
+            color=Colors.inventory,
         )
         embed.add_field(name, info)
 
@@ -89,7 +90,7 @@ class Inventory(Scale):
 
     @inventory.error
     @item.error
-    async def item_error(self, e: Exception, ctx: MessageContext, *_):
+    async def error(self, e: Exception, ctx: MessageContext, *_):
         if isinstance(e, AssertionError):
             return await ctx.reply(
                 embed=Embed(

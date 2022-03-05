@@ -1,0 +1,12 @@
+you:
+  title: Your money
+  money:
+    one: "You have `{cnt}` {emoji} money."
+    many: "You have `{cnt}` {emoji} money."
+    zero: "You have no {emoji} money."
+all:
+  title: Market's money
+  money:
+    one: "The market has `{cnt}` {emoji} money."
+    many: "The market has `{cnt}` {emoji} money."
+    zero: "The market has no {emoji} money."

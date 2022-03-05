@@ -191,7 +191,7 @@ class Profile(Scale):
         f.unlink()
 
     @profile.error
-    async def profile_error(self, e: Exception, ctx: MessageContext, *_):
+    async def error(self, e: Exception, ctx: MessageContext, *_):
         if isinstance(e, AssertionError):
             return await ctx.reply(
                 embed=Embed(

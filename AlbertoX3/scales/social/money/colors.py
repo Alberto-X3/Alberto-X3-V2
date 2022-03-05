@@ -5,4 +5,4 @@ from AlbertoX3.colors import AllColors
 
 
 class Colors(AllColors):
-    created = AllColors.wisteria
+    money = 0x008A00

@@ -122,6 +122,7 @@ class MaterialColors:
     default: int = teal[600]
     error: int = red["a700"]
     warning: int = yellow["a200"]
+    assertion = orange[900]
 
 
 class AllColors(FlatUIColors, MaterialColors):

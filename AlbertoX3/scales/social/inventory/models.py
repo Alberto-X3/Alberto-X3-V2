@@ -49,14 +49,7 @@ class InventoryModel(Base):
         item: int,
         quantity: int,
     ) -> "InventoryModel":
-        if (inv := await db.get(InventoryModel, user=user, item=item)) is None:
-            return await db.add(
-                InventoryModel(
-                    user=user,
-                    item=item,
-                    quantity=quantity,
-                )
-            )
+        inv = await InventoryModel.get(user=user, item=item)
         inv.quantity = quantity
         return inv
 
