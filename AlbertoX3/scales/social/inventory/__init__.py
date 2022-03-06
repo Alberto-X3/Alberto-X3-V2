@@ -18,12 +18,19 @@ from dis_snek import (
 )
 
 from AlbertoX3.translations import t
+from AlbertoX3.scales.social.money import (
+    Colors as mColors,
+    MoneyModel,
+    get_emoji,
+    get_global_money,
+)  # noqa
 
 from .colors import Colors
 from .models import ItemModel, InventoryModel
 
 
 tg = t.g
+tm = t.money
 t = t.inventory
 
 
@@ -88,8 +95,56 @@ class Inventory(Scale):
             embed=embed,
         )
 
-    @inventory.error
+    @message_command("buy")
+    async def buy(self, ctx: MessageContext):
+        item = ctx.args[0] if ctx.args else ""
+        assert item.isnumeric(), t.item.not_found(item=item)
+        item = await ItemModel.get(int(item))
+        assert item is not None, t.item.not_found(item=item.id)
+        assert item.buyable, t.item.unbuyable(item=item.id)
+
+        payer = await MoneyModel.get(ctx.author.id)
+        emoji = await get_emoji(item.price, (g := await get_global_money()))
+        assert payer.amount >= item.price, tm.to_expensive(
+            required=item.price,
+            available=payer.amount,
+            emoji_r=emoji,
+            emoji_a=await get_emoji(payer.amount, g),
+        )
+        if item.max_available is not None:
+            assert (
+                await item.get_claimed_amount() < item.max_available
+            ), t.item.not_available(item=item.id)
+
+        await MoneyModel.update(payer.user, -item.price, True)
+        await InventoryModel.update(payer.user, item.id, 1, True)
+
+        embed = Embed(
+            description=t.bought(price=item.price, emoji=emoji, item=item.id),
+            timestamp=Timestamp.now(),
+            footer=EmbedFooter(
+                text=tg.executed_by(user=ctx.author, id=ctx.author.id),
+                icon_url=ctx.author.display_avatar.url,
+            ),
+            color=mColors.transaction,
+        )
+
+        t_item = getattr(t.items, str(item.id))
+        description = t_item.description
+        info = [t.item.description(description=description)]
+        if item.max_available is not None:
+            info.append(t.item.quantity(cnt=item.max_available))
+        info = "\n\n".join(info)
+
+        embed.add_field(t_item.name, info)
+
+        await ctx.reply(
+            embed=embed,
+        )
+
     @item.error
+    @inventory.error
+    @buy.error
     async def error(self, e: Exception, ctx: MessageContext, *_):
         if isinstance(e, AssertionError):
             return await ctx.reply(

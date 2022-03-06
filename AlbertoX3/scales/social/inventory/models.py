@@ -34,8 +34,17 @@ class ItemModel(Base):
     @db_wrapper
     async def get(
         id: int,  # noqa
-    ) -> "ItemModel":
+    ) -> "ItemModel | None":
         return await db.get(ItemModel, id=id)
+
+    @db_wrapper
+    async def get_claimed_amount(self) -> int:
+        return sum(
+            map(
+                lambda i: i.quantity,
+                await db.all(filter_by(InventoryModel, item=self.id)),
+            )
+        )
 
 
 class InventoryModel(Base):
@@ -54,12 +63,15 @@ class InventoryModel(Base):
         user: int,
         item: int,
         quantity: int,
+        relative: bool = False,
     ) -> "InventoryModel":
         inv = await db.get(InventoryModel, user=user, item=item) or await db.add(
             InventoryModel(user=user, item=item, quantity=0)
         )
         # similar to InventoryModel.get, but this would
         # close the connection to the database
+        if relative:
+            quantity = inv.quantity + quantity
         inv.quantity = quantity
         return inv
 

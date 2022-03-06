@@ -10,3 +10,7 @@
   max_available: null
   buyable: true
   price: 500
+3:
+  max_available: null
+  buyable: true
+  price: -100
