@@ -7,6 +7,10 @@ item:
     one: "`{cnt}` item available."
     many: "`{cnt}` items available."
     zero: No items available.
+  in_the_market:
+    one: "**`{cnt}` item** is in the market left."
+    many: "`{cnt}` items are in the market left."
+    zero: "***No items** are in the market left.*"
   not_found: "Can't find the item `{item}`!"
   not_available: "The item `{item}` is not available!"
   unbuyable: "The item `{item}` can't be bought!"
@@ -19,7 +23,7 @@ items:
     name: Briefcase o' luck
     description: Just very *very* rare.
   "2":
-    name: Golden Banhammer
+    name: Banhammer d' Golden
     description: Makes all bans shiny.
   "3":
     name: Item d' cheater

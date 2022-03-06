@@ -19,11 +19,11 @@ from dis_snek import (
 
 from AlbertoX3.translations import t
 from AlbertoX3.scales.social.money import (
-    Colors as mColors,
-    MoneyModel,
-    get_emoji,
-    get_global_money,
-)  # noqa
+    Colors as mColors,  # noqa (because of __all__)
+    MoneyModel,  # noqa (because of __all__)
+    get_emoji,  # noqa (because of __all__)
+    get_global_money,  # noqa (because of __all__)
+)
 
 from .colors import Colors
 from .models import ItemModel, InventoryModel
@@ -39,7 +39,7 @@ class Inventory(Scale):
     async def item(self, ctx: MessageContext):
         item = ctx.args[0] if ctx.args else None
         assert item in t.items, t.item.not_found(item=item)
-        item: ItemModel = await ItemModel.get(int(item))  # type: ignore
+        item = await ItemModel.get(int(item))
 
         t_item = getattr(t.items, str(item.id))
         name = t_item.name
@@ -48,6 +48,11 @@ class Inventory(Scale):
         info = [t.item.description(description=description)]
         if item.max_available is not None:
             info.append(t.item.quantity(cnt=item.max_available))
+            info.append(
+                t.item.in_the_market(
+                    cnt=item.max_available - await item.get_claimed_amount()
+                )
+            )
         info = "\n\n".join(info)
 
         embed = Embed(
@@ -134,6 +139,11 @@ class Inventory(Scale):
         info = [t.item.description(description=description)]
         if item.max_available is not None:
             info.append(t.item.quantity(cnt=item.max_available))
+            info.append(
+                t.item.in_the_market(
+                    cnt=item.max_available - await item.get_claimed_amount()
+                )
+            )
         info = "\n\n".join(info)
 
         embed.add_field(t_item.name, info)
