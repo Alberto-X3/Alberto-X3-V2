@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, BigInteger, Boolean
 
-from AlbertoX3.database import Base, db, db_wrapper, filter_by
+from AlbertoX3.database import Base, db, filter_by
 
 
 class ItemModel(Base):
@@ -14,7 +14,6 @@ class ItemModel(Base):
     max_available: Column | int | None = Column(Integer, nullable=True)
 
     @staticmethod
-    @db_wrapper
     async def add(
         id: int,  # noqa
         buyable: bool = False,
@@ -31,13 +30,11 @@ class ItemModel(Base):
         )
 
     @staticmethod
-    @db_wrapper
     async def get(
         id: int,  # noqa
     ) -> "ItemModel | None":
         return await db.get(ItemModel, id=id)
 
-    @db_wrapper
     async def get_claimed_amount(self) -> int:
         return sum(
             map(
@@ -58,25 +55,19 @@ class InventoryModel(Base):
     quantity: Column | int = Column(Integer, nullable=False)
 
     @staticmethod
-    @db_wrapper
     async def update(
         user: int,
         item: int,
         quantity: int,
         relative: bool = False,
     ) -> "InventoryModel":
-        inv = await db.get(InventoryModel, user=user, item=item) or await db.add(
-            InventoryModel(user=user, item=item, quantity=0)
-        )
-        # similar to InventoryModel.get, but this would
-        # close the connection to the database
+        inv = await InventoryModel.get(user, item)
         if relative:
             quantity = inv.quantity + quantity
         inv.quantity = quantity
         return inv
 
     @staticmethod
-    @db_wrapper
     async def get(
         user: int,
         item: int | None = None,

@@ -17,6 +17,7 @@ from dis_snek import (
     Timestamp,
 )
 
+from AlbertoX3.database import db_wrapper
 from AlbertoX3.translations import t
 from AlbertoX3.scales.social.money import (
     Colors as mColors,  # noqa (because of __all__)
@@ -172,6 +173,7 @@ class Inventory(Scale):
             raise
 
 
+@db_wrapper
 async def create_all_items(items):
     await __import__("asyncio").sleep(2)  # all tables should be created
     for id in items:  # noqa

@@ -11,6 +11,7 @@ from AlbertoX3 import (
     TOKEN,
     LOG_LEVEL,
     db,
+    db_wrapper,
     load_translations,
     t,
 )
@@ -25,6 +26,7 @@ from dis_snek import (
     EmbedFooter,
     Timestamp,
     File,
+    BaseCommand,
 )
 
 
@@ -54,6 +56,12 @@ bot = Snake(
     sync_interactions=True,
     delete_unused_application_cmds=True,
 )
+
+
+# wrap every command with the database
+for command_subclass in BaseCommand.__subclasses__():
+    if hasattr(command_subclass, "__call__"):
+        command_subclass.__call__ = db_wrapper(command_subclass.__call__)
 
 
 for scale in Config.SCALES:

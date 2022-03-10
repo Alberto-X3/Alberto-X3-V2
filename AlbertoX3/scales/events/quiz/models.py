@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, BigInteger, Text, Boolean
 
-from AlbertoX3.database import Base, db, db_wrapper, filter_by
+from AlbertoX3.database import Base, db, filter_by
 
 
 async def get_group(group: str) -> list["YesNoModel", "QuadChoiceModel"]:

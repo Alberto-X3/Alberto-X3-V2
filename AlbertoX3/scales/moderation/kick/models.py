@@ -1,7 +1,7 @@
 from datetime import datetime
 from sqlalchemy import Column, Integer, BigInteger, Text
 
-from AlbertoX3.database import Base, UTCDatetime, db, db_wrapper
+from AlbertoX3.database import Base, UTCDatetime, db
 
 
 class KickModel(Base):
@@ -16,7 +16,6 @@ class KickModel(Base):
     reason: Column | str = Column(Text, nullable=False)
 
     @staticmethod
-    @db_wrapper
     async def add(member: int, executor: int, reason: str) -> "KickModel":
         return await db.add(
             KickModel(
