@@ -82,7 +82,7 @@ def create_rainbow_flag():
     return img
 
 
-def create_all_flags():
+async def create_all_flags():
     """
     Creates every flag.
     """
@@ -94,7 +94,7 @@ def create_all_flags():
         if callable(func):
             if match := flag_creator.search(name):
                 logger.debug(f"Creating flag {match.group(1)}")
-                func()
+                await run_in_thread(func)
 
 
 class Profile(Scale):
@@ -210,4 +210,4 @@ class Profile(Scale):
 
 def setup(bot: Snake):
     Profile(bot)
-    create_all_flags()
+    bot.loop.create_task(create_all_flags())
