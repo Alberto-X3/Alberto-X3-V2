@@ -1,14 +1,12 @@
 __all__ = ("Settings",)
 
 
-import sys
-
-from aenum import NoAliasEnum
 from sqlalchemy import Column, String
 from typing import TypeVar, Type
 
 from .aio import LockDeco
 from .database import Base, db, redis
+from .enum import NoAliasEnum
 from .environment import CACHE_TTL
 
 
@@ -66,20 +64,6 @@ class SettingsModel(Base):
 
 
 class Settings(NoAliasEnum):
-    @property
-    def scale(self) -> str:
-        return sys.modules[self.__class__.__module__].__package__.rsplit(
-            ".", maxsplit=1
-        )[-1]
-
-    @property
-    def fullname(self) -> str:
-        return "{0.scale}:{0.name}".format(self)
-
-    @property
-    def default(self) -> T:
-        return self.value
-
     @property
     def type(self) -> Type[T]:
         return type(self.value)

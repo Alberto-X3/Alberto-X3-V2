@@ -13,7 +13,8 @@ Project
 │   │       │   ├── colors.py
 │   │       │   ├── models.py
 │   │       │   ├── permissions.py
-│   │       │   └── settings.py
+│   │       │   ├── settings.py
+│   │       │   └── stats.py
 │   │       └── __init__.py
 │   ├── __init__.py
 │   ├── __main__.py
@@ -21,9 +22,11 @@ Project
 │   ├── colors.py
 │   ├── config.py
 │   ├── database.py
+│   ├── enum.py
 │   ├── environment.py
 │   ├── permissions.py
 │   ├── settings.py
+│   ├── stats.py
 │   ├── translations.py
 │   ├── types.py
 │   └── utils.py
