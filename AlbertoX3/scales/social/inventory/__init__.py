@@ -8,7 +8,6 @@ from pathlib import Path
 from yaml import safe_load
 
 from dis_snek import (
-    Scale,
     Snake,
     message_command,
     MessageContext,
@@ -17,6 +16,7 @@ from dis_snek import (
     Timestamp,
 )
 
+from AlbertoX3.adis_snek import Scale
 from AlbertoX3.database import db_wrapper
 from AlbertoX3.translations import t
 from AlbertoX3.scales.social.money import (

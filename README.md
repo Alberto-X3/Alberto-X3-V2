@@ -22,6 +22,7 @@ Project
 │   ├── colors.py
 │   ├── config.py
 │   ├── database.py
+│   ├── dis_snek.py
 │   ├── enum.py
 │   ├── environment.py
 │   ├── permissions.py

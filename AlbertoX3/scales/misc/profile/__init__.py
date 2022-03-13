@@ -11,7 +11,6 @@ from pathlib import Path
 from PIL import Image
 
 from dis_snek import (
-    Scale,
     Snake,
     message_command,
     MessageContext,
@@ -22,6 +21,7 @@ from dis_snek import (
     File,
 )
 
+from AlbertoX3.adis_snek import Scale
 from AlbertoX3.aio import run_in_thread
 from AlbertoX3.translations import t
 from AlbertoX3.utils import get_user

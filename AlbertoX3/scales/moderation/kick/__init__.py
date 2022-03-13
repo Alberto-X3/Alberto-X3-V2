@@ -6,7 +6,6 @@ __all__ = (
 
 from dis_snek import (
     Snake,
-    Scale,
     MessageContext,
     Member,
     message_command,
@@ -15,6 +14,7 @@ from dis_snek import (
     EmbedFooter,
 )
 
+from AlbertoX3.adis_snek import Scale
 from AlbertoX3.translations import t
 from AlbertoX3.utils import get_member
 

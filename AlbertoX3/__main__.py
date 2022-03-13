@@ -58,12 +58,6 @@ bot = Snake(
 )
 
 
-# wrap every command with the database
-for command_subclass in BaseCommand.__subclasses__():
-    if hasattr(command_subclass, "__call__"):
-        command_subclass.__call__ = db_wrapper(command_subclass.__call__)
-
-
 for scale in Config.SCALES:
     logger.info(f"Adding Scale '{scale.name}' from '{scale.package}'")
     bot.grow_scale(scale.package)

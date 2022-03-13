@@ -14,7 +14,8 @@ from dis_snek import (
     Timestamp,
 )
 
-from AlbertoX3.database import db_wrapper, db, filter_by
+from AlbertoX3.adis_snek import Scale
+from AlbertoX3.database import db, filter_by
 from AlbertoX3.translations import t
 from AlbertoX3.utils import get_user
 
@@ -26,7 +27,6 @@ tg = t.g
 t = t.money
 
 
-@db_wrapper
 async def get_global_money() -> int:
     return sum(map(lambda m: m.amount, await db.all(filter_by(MoneyModel))))
 

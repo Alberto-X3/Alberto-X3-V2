@@ -8,13 +8,13 @@ from dis_snek.ext.debug_scale import DebugScale, debug_embed, InteractionContext
 from dis_snek.ext.paginators import Paginator
 from dis_snek import (
     Snake,
-    Scale,
     SlashCommandOption,
     SlashCommandChoice,
     OptionTypes,
 )
 
-from AlbertoX3.database import Base, db, select, db_wrapper
+from AlbertoX3.adis_snek import Scale
+from AlbertoX3.database import Base, db, select
 
 
 class Debug(DebugScale, Scale):
@@ -45,7 +45,6 @@ class Debug(DebugScale, Scale):
         ],
         sub_cmd_description="Get information about the database",
     )
-    @db_wrapper
     async def database_info(self, ctx: InteractionContext) -> None:
         await ctx.defer()
 

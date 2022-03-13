@@ -5,7 +5,6 @@ __all__ = (
 
 
 from dis_snek import (
-    Scale,
     Snake,
     message_command,
     MessageContext,
@@ -14,7 +13,7 @@ from dis_snek import (
     Timestamp,
 )
 
-from AlbertoX3.database import db_wrapper, db, filter_by
+from AlbertoX3.adis_snek import Scale
 from AlbertoX3.translations import t
 
 from .colors import Colors
