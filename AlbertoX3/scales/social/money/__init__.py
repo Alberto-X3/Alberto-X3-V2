@@ -5,7 +5,6 @@ __all__ = (
 
 
 from dis_snek import (
-    Scale,
     Snake,
     message_command,
     MessageContext,
