@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = ("Stats",)
 
 
@@ -16,13 +19,13 @@ class StatsModel(Base):
     value: Column | int = Column(BigInteger, nullable=False)
 
     @staticmethod
-    async def get(name: str) -> "StatsModel":
+    async def get(name: str) -> StatsModel:
         if (stats := await db.get(StatsModel, name=name)) is None:
             return await db.add(StatsModel(name=name, value=0))
         return stats
 
     @staticmethod
-    async def incr(name: str, value: int = 1) -> "StatsModel":
+    async def incr(name: str, value: int = 1) -> StatsModel:
         stats = await StatsModel.get(name)
         stats.value += value
         return stats

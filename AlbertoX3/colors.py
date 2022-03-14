@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "AllColors",
     "FlatUIColors",
@@ -6,7 +9,12 @@ __all__ = (
 
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 from yaml import safe_load
+
+
+if TYPE_CHECKING:
+    from typing import Dict
 
 
 class NestedInt(int):
@@ -14,13 +22,13 @@ class NestedInt(int):
     Integer with a read-only dictionary.
     """
 
-    _values: dict[str | int, int] = {}
+    _values: Dict[str | int, int] = {}
 
     def __new__(
         cls,
         x: int,
-        values: dict[str | int, int],
-    ) -> "NestedInt":
+        values: Dict[str | int, int],
+    ) -> NestedInt:
         obj = super().__new__(cls, x)
         obj._values = values
         return obj
@@ -44,10 +52,10 @@ class NestedInt(int):
 _colors_path = Path(__file__).parent / "colors"
 
 with open(_colors_path / "flat_ui.yml", encoding="utf-8") as f:
-    _color_data_flat_ui: dict[str, int] = safe_load(f)
+    _color_data_flat_ui: Dict[str, int] = safe_load(f)
 
 with open(_colors_path / "material.yml", encoding="utf-8") as f:
-    _color_data_material: dict[str, dict[str | int, int]] = safe_load(f)
+    _color_data_material: Dict[str, dict[str | int, int]] = safe_load(f)
 
 
 def _load_flat_ui(

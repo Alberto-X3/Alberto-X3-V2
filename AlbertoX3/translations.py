@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Translations",
     "merge",
@@ -8,6 +11,7 @@ __all__ = (
 
 from AlbertUnruhUtils.utils.logger import get_logger
 from pathlib import Path
+from typing import TYPE_CHECKING
 from yaml import safe_load
 
 from .config import Config
@@ -15,26 +19,30 @@ from .types import PrimitiveScale
 from .utils import get_language
 
 
+if TYPE_CHECKING:
+    from typing import Dict, List, Optional, NoReturn, Any
+
+
 logger = get_logger(__name__.split(".")[-1], level=None, add_handler=False)
 
 
 def merge(
-    base: dict,
-    src: dict,
-) -> dict:
+    base: Dict,
+    src: Dict,
+) -> Dict:
     """
     Merges to dictionaries recursively.
 
     Parameters
     ----------
-    base: dict
+    base: Dict
         The dictionary to merge into.
-    src: dict
+    src: Dict
         The dictionary to merge into ``base``.
 
     Returns
     -------
-    dict
+    Dict
         The merged dictionary.
     """
     for k, v in src.items():
@@ -51,7 +59,7 @@ class FormatStr(str):
 
 
 class TranslationDict(dict):
-    _fallback: dict
+    _fallback: Dict
 
     def __call__(self, *args, **kwargs):
         cnt = kwargs.get("cnt", kwargs.get("count", None))
@@ -77,23 +85,23 @@ class TranslationDict(dict):
 
         return value
 
-    def __contains__(self, item):
+    def __contains__(self, item) -> bool:
         return super().__contains__(item) or self._fallback.__contains__(item)
 
 
 class TranslationNamespace:
-    _sources: list[Path]
-    _translations: dict[str, dict[str, ...]]
+    _sources: List[Path]
+    _translations: Dict[str, Dict[str, Any]]
 
     def __init__(self):
         self._sources = []
         self._translations = {}
 
-    def tn_add_source(self, source: Path):
+    def tn_add_source(self, source: Path) -> NoReturn:
         self._sources.append(source)
         self._translations.clear()
 
-    def tn_get_language(self, lan: str) -> dict[str, ...]:
+    def tn_get_language(self, lan: str) -> Dict[str, Any]:
         assert lan in Config.LANGUAGE_AVAILABLE, (
             f"Unsupported language {lan!r}! "
             f"Supported languages are: {', '.join(Config.LANGUAGE_AVAILABLE)}"
@@ -131,12 +139,12 @@ class TranslationNamespace:
 
 class Translations:
     FALLBACK: str = "EN"
-    _namespace: dict[str, TranslationNamespace]
+    _namespace: Dict[str, TranslationNamespace]
 
     def __init__(self):
         self._namespace = {}
 
-    def register_translation_namespace(self, name: str, file: Path):
+    def register_translation_namespace(self, name: str, file: Path) -> NoReturn:
         if name not in self._namespace:
             logger.debug(f"Creating TranslationNamespace for {name!r}")
             self._namespace[name] = TranslationNamespace()
@@ -145,16 +153,16 @@ class Translations:
 
         self._namespace[name].tn_add_source(file)
 
-    def __getattr__(self, item: str):
+    def __getattr__(self, item: str) -> TranslationNamespace:
         return self._namespace[item]
 
 
 def load_translations(
     *,
-    translations: Translations = None,
-    scales: list[PrimitiveScale] = None,
+    translations: Optional[Translations] = None,
+    scales: Optional[List[PrimitiveScale]] = None,
     translation_folder: str = "translations",
-) -> None:
+) -> NoReturn:
     """
     Loads translations from scales.
 
@@ -162,7 +170,7 @@ def load_translations(
     ----------
     translations: Translations, optional
         The translations to load into (defaults to ``translations.t``)
-    scales: list[PrimitiveScale], optional
+    scales: List[PrimitiveScale], optional
         The scales to look at (defaults to ``Config.SCALES``).
     translation_folder: str
         The name of the translation folder.

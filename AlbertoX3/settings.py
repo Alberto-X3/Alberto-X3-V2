@@ -1,13 +1,20 @@
+from __future__ import annotations
+
+
 __all__ = ("Settings",)
 
 
 from sqlalchemy import Column, String
-from typing import TypeVar, Type
+from typing import TYPE_CHECKING, TypeVar, Type
 
 from .aio import LockDeco
 from .database import Base, db, redis
 from .enum import NoAliasEnum
 from .environment import CACHE_TTL
+
+
+if TYPE_CHECKING:
+    from typing import Optional
 
 
 T = TypeVar("T")
@@ -22,7 +29,7 @@ class SettingsModel(Base):
     value: Column | str = Column(String(256), nullable=False)
 
     @staticmethod
-    async def _create(key: str, value: str | int | float | bool) -> "SettingsModel":
+    async def _create(key: str, value: str | int | float | bool) -> SettingsModel:
         if isinstance(value, bool):
             value = int(value)
 
@@ -30,7 +37,7 @@ class SettingsModel(Base):
 
     @staticmethod
     @LockDeco
-    async def get(dtype: Type[T], key: str, default: T | None = None) -> T | None:
+    async def get(dtype: Type[T], key: str, default: Optional[T] = None) -> Optional[T]:
         if await redis.exists(r_key := f"settings::{key}"):
             out = await redis.get(r_key)
         else:
@@ -48,7 +55,7 @@ class SettingsModel(Base):
 
     @staticmethod
     @LockDeco
-    async def set(dtype: Type[T], key: str, value: T) -> "SettingsModel":
+    async def set(dtype: Type[T], key: str, value: T) -> SettingsModel:
         r_key = f"settings::{key}"
         if (row := await db.get(SettingsModel, key=key)) is None:
             row = await SettingsModel._create(key, value)

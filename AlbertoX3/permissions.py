@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = ("PermissionsModel",)
 
 
@@ -16,7 +19,7 @@ class PermissionsModel(Base):
     level: Column | int = Column(Integer, nullable=False)
 
     @staticmethod
-    async def create(permission: str, level: int) -> "PermissionsModel":
+    async def create(permission: str, level: int) -> PermissionsModel:
         return await db.add(PermissionsModel(permission=permission, level=level))
 
     @staticmethod
@@ -32,7 +35,7 @@ class PermissionsModel(Base):
         return row.level
 
     @staticmethod
-    async def set(permission: str, level: int) -> "PermissionsModel":
+    async def set(permission: str, level: int) -> PermissionsModel:
         await redis.setex(f"permissions::{permission}", CACHE_TTL, level)
 
         if (row := await db.get(PermissionsModel, permission=permission)) is None:

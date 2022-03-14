@@ -1,13 +1,17 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Debug",
     "setup",
 )
 
 
-from dis_snek.ext.debug_scale import DebugScale, debug_embed, InteractionContext  # noqa
+from typing import TYPE_CHECKING
+
+from dis_snek.ext.debug_scale import DebugScale, debug_embed  # noqa
 from dis_snek.ext.paginators import Paginator
 from dis_snek import (
-    Snake,
     SlashCommandOption,
     SlashCommandChoice,
     OptionTypes,
@@ -15,6 +19,10 @@ from dis_snek import (
 
 from AlbertoX3.adis_snek import Scale
 from AlbertoX3.database import Base, db, select
+
+
+if TYPE_CHECKING:
+    from dis_snek import InteractionContext, Snake
 
 
 class Debug(DebugScale, Scale):

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 TOKEN: str
 
 LOG_LEVEL: str | int

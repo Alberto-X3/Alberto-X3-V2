@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from datetime import datetime
 from sqlalchemy import Column, Integer, BigInteger, Text
 
@@ -16,7 +19,7 @@ class KickModel(Base):
     reason: Column | str = Column(Text, nullable=False)
 
     @staticmethod
-    async def add(member: int, executor: int, reason: str) -> "KickModel":
+    async def add(member: int, executor: int, reason: str) -> KickModel:
         return await db.add(
             KickModel(
                 member=member,

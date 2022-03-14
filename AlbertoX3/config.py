@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Contributor",
     "Config",
@@ -8,11 +11,17 @@ __all__ = (
 
 
 import re
+
 from pathlib import Path
+from typing import TYPE_CHECKING
 from yaml import safe_load
 
-from .utils import get_values
 from .types import PrimitiveScale
+from .utils import get_values
+
+
+if TYPE_CHECKING:
+    from typing import Tuple, Set, NoReturn, Dict, List
 
 
 class Contributor:
@@ -22,7 +31,7 @@ class Contributor:
     Notes
     -----
     Values are ``("Discord ID", ("GitHub ID", "GitHub Node-ID"))``-tuples.
-    Following signature is used: ``tuple[int, tuple[int, str]]``
+    Following signature is used: ``Tuple[int, Tuple[int, str]]``
     """
 
     AlbertUnruh = (546320163276849162, (73029826, "MDQ6VXNlcjczMDI5ODI2"))
@@ -53,25 +62,25 @@ class Config:
     SUPPORT_DISCORD: str
 
     # developers
-    AUTHOR: tuple[int, tuple[int, str]]
-    CONTRIBUTORS: set[tuple[int, tuple[int, str]]]
+    AUTHOR: Tuple[int, Tuple[int, str]]
+    CONTRIBUTORS: Set[Tuple[int, Tuple[int, str]]]
 
     # language
     LANGUAGE_DEFAULT: str
     LANGUAGE_FALLBACK: str
-    LANGUAGE_AVAILABLE: list[str]
+    LANGUAGE_AVAILABLE: List[str]
 
     # scales
     SCALES_FOLDER_RAW: str
     SCALES_FOLDER: Path
-    SCALES: set[PrimitiveScale]
+    SCALES: Set[PrimitiveScale]
 
 
 def get_config_values() -> str:
     return get_values(Config)
 
 
-def load_bot(config: dict):
+def load_bot(config: Dict) -> NoReturn:
     Config.NAME = config["name"]
 
     with open(Path(__file__).parent / "__init__.py", encoding="utf-8") as f:
@@ -114,29 +123,31 @@ def load_bot(config: dict):
     Config.PREFIX = config["prefix"]
 
 
-def load_repo(config: dict):
+def load_repo(config: Dict) -> NoReturn:
     Config.REPO_OWNER = config["repo"]["owner"]
     Config.REPO_NAME = config["repo"]["name"]
     Config.REPO_LINK = f"https://github.com/{Config.REPO_OWNER}/{Config.REPO_NAME}"
     Config.REPO_ICON = config["repo"]["icon"]
 
 
-def load_help(config: dict):
+def load_help(config: Dict) -> NoReturn:
     Config.SUPPORT_DISCORD = config["discord"]
 
 
-def load_developers(config: dict):
+def load_developers(config: Dict) -> NoReturn:
     Config.AUTHOR = getattr(Contributor, config["author"])
-    Config.CONTRIBUTORS = {getattr(Contributor, c) for c in config["contributors"]}
+    Config.CONTRIBUTORS = set(
+        map(lambda c: getattr(Contributor, c), config["contributors"])
+    )
 
 
-def load_language(config: dict):
+def load_language(config: Dict) -> NoReturn:
     Config.LANGUAGE_DEFAULT = config["language"]["default"]
     Config.LANGUAGE_FALLBACK = config["language"]["fallback"]
     Config.LANGUAGE_AVAILABLE = config["language"]["available"]
 
 
-def load_scales(config: dict, path: Path = Path.cwd()):
+def load_scales(config: Dict, path: Path = Path.cwd()) -> NoReturn:
     Config.SCALES_FOLDER_RAW = config["scale"]["folder"]
     folder = Path(Config.SCALES_FOLDER_RAW)
     if not folder.is_absolute():  # a relative path is given
@@ -147,7 +158,7 @@ def load_scales(config: dict, path: Path = Path.cwd()):
 
 def get_scales(
     scale_marker: str = "__init__.py", *, cur_path: Path = None, cur_mod: str = ""
-) -> set[PrimitiveScale]:
+) -> Set[PrimitiveScale]:
     """
     Recursively gets every scale.
 
@@ -162,7 +173,7 @@ def get_scales(
 
     Returns
     -------
-    set[_Scale]
+    Set[_Scale]
         All paths to the scales.
     """
     scales = set()
@@ -190,7 +201,7 @@ def get_scales(
     return scales
 
 
-def load_config_file(path: Path):
+def load_config_file(path: Path) -> NoReturn:
     """
     Loads the configuration.
 

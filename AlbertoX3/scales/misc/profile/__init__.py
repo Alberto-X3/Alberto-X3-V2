@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Profile",
     "setup",
@@ -9,11 +12,10 @@ from asyncio import sleep
 from itertools import count
 from pathlib import Path
 from PIL import Image
+from typing import TYPE_CHECKING
 
 from dis_snek import (
-    Snake,
     message_command,
-    MessageContext,
     Embed,
     EmbedFooter,
     EmbedAttachment,
@@ -27,6 +29,10 @@ from AlbertoX3.translations import t
 from AlbertoX3.utils import get_user
 
 from .colors import Colors
+
+
+if TYPE_CHECKING:
+    from dis_snek import MessageContext, Snake
 
 
 tg = t.g

@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "get_values",
     "get_member",
@@ -11,19 +14,23 @@ __all__ = (
 import re
 import sys
 
-from typing import TypeVar, Type
+from typing import TYPE_CHECKING, TypeVar, Type
 from dis_snek import Context, User, Member, Snowflake_Type
 
 from .types import PrimitiveScale
 
 
+if TYPE_CHECKING:
+    from typing import List, Optional, Any
+
+
 T = TypeVar("T")
 
 
-def get_values(obj: ...) -> str:
-    keys: list[str] = [k for k in dir(obj) if not k.startswith("_")]
-    length = len(max(keys, key=len))
-    string: list[str] = []
+def get_values(obj: object) -> str:
+    keys: List[str] = [k for k in dir(obj) if not k.startswith("_")]
+    length: int = len(max(keys, key=len))
+    string: List[str] = []
 
     for key in keys:
         val = getattr(obj, key)
@@ -35,7 +42,7 @@ def get_values(obj: ...) -> str:
 async def get_member(
     ctx: Context,
     raw: str | int | User | Member,
-) -> Member | None:
+) -> Optional[Member]:
     match raw:
         case Member():
             return raw
@@ -99,7 +106,7 @@ async def get_member(
 async def get_user(
     ctx: Context,
     raw: str | int | User | Member,
-) -> User | None:
+) -> Optional[User]:
     match raw:
         case Member():
             return raw.user
@@ -161,13 +168,13 @@ async def get_user(
 
 
 def get_bool(
-    raw: ...,
+    raw: Any,
     /,
 ) -> bool:
     """
     Parameters
     ----------
-    raw: any
+    raw: Any
         The input to get the boolean from.
 
     Returns
@@ -189,8 +196,8 @@ def get_bool(
 def get_subclasses_in_scales(
     base: Type[T],
     *,
-    scales: list[PrimitiveScale] = None,
-) -> list[Type[T]]:
+    scales: List[PrimitiveScale] = None,
+) -> List[Type[T]]:
     """
     Returns all subclasses from base declared in
 
@@ -198,12 +205,12 @@ def get_subclasses_in_scales(
     ----------
     base: Type[T]
         The baseclass to get the subclasses from.
-    scales: list[PrimitiveScale], optional
+    scales: List[PrimitiveScale], optional
         The scales to look at (defaults to ``Config.SCALES``).
 
     Returns
     -------
-    list[Type[T]]
+    List[Type[T]]
     """
     if scales is None:
         from .config import Config

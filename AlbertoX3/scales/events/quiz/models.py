@@ -1,9 +1,17 @@
+from __future__ import annotations
+
+
 from sqlalchemy import Column, Integer, BigInteger, Text, Boolean
+from typing import TYPE_CHECKING
 
 from AlbertoX3.database import Base, db, filter_by
 
 
-async def get_group(group: str) -> list["YesNoModel", "QuadChoiceModel"]:
+if TYPE_CHECKING:
+    from typing import List
+
+
+async def get_group(group: str) -> List[YesNoModel, QuadChoiceModel]:
     return await db.all(filter_by(YesNoModel, group=group)) + await db.all(
         filter_by(QuadChoiceModel, group=group)
     )

@@ -1,13 +1,16 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Money",
     "setup",
 )
 
 
+from typing import TYPE_CHECKING
+
 from dis_snek import (
-    Snake,
     message_command,
-    MessageContext,
     Embed,
     EmbedFooter,
     Timestamp,
@@ -20,6 +23,10 @@ from AlbertoX3.utils import get_user
 
 from .colors import Colors
 from .models import MoneyModel
+
+
+if TYPE_CHECKING:
+    from dis_snek import MessageContext, Snake
 
 
 tg = t.g

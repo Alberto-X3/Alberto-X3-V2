@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 from sqlalchemy import Column, Integer, BigInteger
 
 from AlbertoX3.database import Base, db
@@ -17,7 +20,7 @@ class MoneyModel(Base):
         user: int,
         amount: int,
         relative: bool = False,
-    ) -> "MoneyModel":
+    ) -> MoneyModel:
         inv = await MoneyModel.get(user)
         if relative:
             amount = inv.amount + amount
@@ -27,7 +30,7 @@ class MoneyModel(Base):
     @staticmethod
     async def get(
         user: int,
-    ) -> "MoneyModel":
+    ) -> MoneyModel:
         return await db.get(MoneyModel, user=user) or await db.add(
             MoneyModel(user=user, amount=0)
         )

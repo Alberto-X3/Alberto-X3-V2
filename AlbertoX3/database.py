@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "select",
     "filter_by",
@@ -29,7 +32,7 @@ from sqlalchemy.sql.expression import exists as sa_exists, delete as sa_delete, 
 from sqlalchemy.sql.functions import count
 from sqlalchemy.sql.selectable import Exists
 from sqlalchemy import TypeDecorator, DateTime, Table
-from typing import TypeVar, Type
+from typing import TYPE_CHECKING, TypeVar, Type
 
 from AlbertUnruhUtils.utils.logger import get_logger
 
@@ -49,6 +52,10 @@ from .environment import (
     REDIS_PORT,
     REDIS_PASSWORD,
 )
+
+
+if TYPE_CHECKING:
+    from typing import Optional, Any, NoReturn
 
 
 T = TypeVar("T")
@@ -106,7 +113,7 @@ class Base(metaclass=DeclarativeMeta):
 
     __table_args__ = {"mysql_collate": "utf8mb4_bin"}
 
-    def __init__(self, **kwargs: ...):
+    def __init__(self, **kwargs: Any):
         self.registry.constructor(self, **kwargs)
 
 
@@ -135,8 +142,8 @@ class DB:
     """
 
     engine: AsyncEngine
-    _session: ContextVar[AsyncSession | None]
-    _close_event: ContextVar[Event | None]
+    _session: ContextVar[Optional[AsyncSession]]
+    _close_event: ContextVar[Optional[Event]]
 
     def __init__(
         self,
@@ -150,7 +157,7 @@ class DB:
         pool_size: int = 20,
         max_overflow: int = 20,
         echo: bool = False,
-    ) -> None:
+    ):
         """
         Parameters
         ----------
@@ -194,7 +201,7 @@ class DB:
         self._session = ContextVar("session", default=None)
         self._close_event = ContextVar("close_event", default=None)
 
-    async def create_tables(self):
+    async def create_tables(self) -> NoReturn:
         """
         Creates all tables for the scales.
         """
@@ -237,11 +244,11 @@ class DB:
     async def get(self, cls: Type[T], *args, **kwargs) -> T | None:
         return await self.first(filter_by(cls, *args, **kwargs))
 
-    async def commit(self):
+    async def commit(self) -> NoReturn:
         if self._session.get():
             await self.session.commit()
 
-    async def close(self):
+    async def close(self) -> NoReturn:
         if self._session.get():
             await self.session.close()
             self._close_event.get().set()
@@ -269,7 +276,7 @@ async def db_context():
         await db.close()
 
 
-def db_wrapper(func):
+def db_wrapper(func: T) -> T:
     @wraps(func)
     async def decorator(*args, **kwargs):
         async with db_context():

@@ -1,7 +1,22 @@
+from __future__ import annotations
+
+
 from AlbertUnruhUtils.utils.logger import get_logger
 from itertools import count
 from pathlib import Path
 from traceback import format_exception
+from typing import TYPE_CHECKING
+
+from dis_snek import (
+    Snake,
+    ActivityType,
+    Intents,
+    Activity,
+    Embed,
+    EmbedFooter,
+    Timestamp,
+    File,
+)
 
 from AlbertoX3 import (
     load_config_file,
@@ -11,23 +26,13 @@ from AlbertoX3 import (
     TOKEN,
     LOG_LEVEL,
     db,
-    db_wrapper,
     load_translations,
     t,
 )
 
-from dis_snek import (
-    Snake,
-    ActivityType,
-    Intents,
-    Activity,
-    Context,
-    Embed,
-    EmbedFooter,
-    Timestamp,
-    File,
-    BaseCommand,
-)
+
+if TYPE_CHECKING:
+    from dis_snek import Context
 
 
 logger = get_logger(None, level=LOG_LEVEL)

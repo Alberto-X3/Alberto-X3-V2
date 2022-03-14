@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Inventory",
     "setup",
@@ -6,11 +9,10 @@ __all__ = (
 
 from pathlib import Path
 from yaml import safe_load
+from typing import TYPE_CHECKING
 
 from dis_snek import (
-    Snake,
     message_command,
-    MessageContext,
     Embed,
     EmbedFooter,
     Timestamp,
@@ -28,6 +30,10 @@ from AlbertoX3.scales.social.money import (
 
 from .colors import Colors
 from .models import ItemModel, InventoryModel
+
+
+if TYPE_CHECKING:
+    from dis_snek import MessageContext, Snake
 
 
 tg = t.g

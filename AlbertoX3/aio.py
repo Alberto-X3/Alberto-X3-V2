@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Thread",
     "LockDeco",
@@ -20,14 +23,17 @@ from asyncio import (
     get_running_loop,
 )
 from functools import partial, update_wrapper, wraps
-from typing import Awaitable, Callable, Coroutine, TypeVar
+from typing import TYPE_CHECKING, TypeVar
+
+if TYPE_CHECKING:
+    from typing import Awaitable, Callable, Coroutine, Optional, NoReturn, Tuple, List
 
 
 T = TypeVar("T")
 
 
 class Thread(t_Thread):
-    _return: T | None
+    _return: Optional[T]
     _func: Callable[..., T]
     _event: Event
     _loop: AbstractEventLoop
@@ -44,7 +50,7 @@ class Thread(t_Thread):
         await self._event.wait()
         return self._return
 
-    def run(self) -> None:
+    def run(self) -> NoReturn:
         try:
             self._return = True, self._func()
         except Exception as e:
@@ -75,9 +81,9 @@ class GatherAnyError(Exception):
         self.exception = exception
 
 
-async def gather_any(*coroutines: Awaitable[T]) -> tuple[int, T]:
+async def gather_any(*coroutines: Awaitable[T]) -> Tuple[int, T]:
     event = Event()
-    res: list[tuple[int, bool, T]] = []
+    res: List[Tuple[int, bool, T]] = []
 
     async def inner(idx: int, coro: Awaitable[T]):
         try:
@@ -110,7 +116,7 @@ async def run_in_thread(func, *args, **kwargs):
         return result
 
 
-async def semaphore_gather(n: int, /, *tasks: Coroutine) -> list:
+async def semaphore_gather(n: int, /, *tasks: Coroutine) -> List:
     semaphore = Semaphore(n)
 
     async def inner(t):
@@ -120,7 +126,7 @@ async def semaphore_gather(n: int, /, *tasks: Coroutine) -> list:
     return list(await gather(*map(inner, tasks)))
 
 
-def run_as_task(func):
+def run_as_task(func: T) -> T:
     @wraps(func)
     async def inner(*args, **kwargs):
         create_task(func(*args, **kwargs))

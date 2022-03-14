@@ -1,12 +1,15 @@
+from __future__ import annotations
+
+
 __all__ = (
     "Kick",
     "setup",
 )
 
 
+from typing import TYPE_CHECKING
+
 from dis_snek import (
-    Snake,
-    MessageContext,
     Member,
     message_command,
     Embed,
@@ -20,6 +23,10 @@ from AlbertoX3.utils import get_member
 
 from .colors import Colors
 from .models import KickModel
+
+
+if TYPE_CHECKING:
+    from dis_snek import MessageContext, Snake
 
 
 tg = t.g
