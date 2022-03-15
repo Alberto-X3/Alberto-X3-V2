@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 
-from AlbertoX3.stats import Stats as aStats
+from AlbertoX3.stats import StatsEnum
 
 
-class Stats(aStats):
+class Stats(StatsEnum):
     money = True
     pay = True

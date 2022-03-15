@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-__all__ = ("Stats",)
+__all__ = ("StatsEnum",)
 
 
 from sqlalchemy import Column, String, BigInteger
@@ -31,7 +31,7 @@ class StatsModel(Base):
         return stats
 
 
-class Stats(NoAliasEnum):
+class StatsEnum(NoAliasEnum):
     @property
     async def incr(self) -> int:
         return (await StatsModel.incr(self.fullname)).value
