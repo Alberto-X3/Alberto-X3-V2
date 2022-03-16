@@ -159,25 +159,6 @@ class Inventory(Scale):
             embed=embed,
         )
 
-    @item.error
-    @inventory.error
-    @buy.error
-    async def error(self, e: Exception, ctx: MessageContext, *_):
-        if isinstance(e, AssertionError):
-            return await ctx.reply(
-                embed=Embed(
-                    description=e.args[0],
-                    timestamp=Timestamp.now(),
-                    footer=EmbedFooter(
-                        text=tg.executed_by(user=ctx.author, id=ctx.author.id),
-                        icon_url=ctx.author.display_avatar.url,
-                    ),
-                    color=Colors.assertion,
-                ),
-            )
-        else:
-            raise
-
 
 @db_wrapper
 async def create_all_items(items):

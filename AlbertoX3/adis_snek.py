@@ -17,13 +17,23 @@ from dis_snek import (
     SlashCommand as dSlashCommand,
     Listener as dListener,
     Task as dTask,
+    Embed as dEmbed,
+    EmbedFooter as dEmbedFooter,
+    Timestamp as dTimestamp,
 )
 
+from .colors import AllColors as Colors
 from .database import db_wrapper
+from .translations import t
 
 
 if TYPE_CHECKING:
-    from dis_snek import Snake as dSnake, Context as dContext
+    from dis_snek import (
+        Snake as dSnake,
+        Context as dContext,
+        MessageContext as dMessageContext,
+        InteractionContext as dInteractionContext,
+    )
     from typing import Callable
 
 
@@ -41,6 +51,9 @@ class Scale(dScale):
                     changes["post_run_callback"] = db_wrapper(member.post_run_callback)
                 if member.error_callback:
                     changes["error_callback"] = db_wrapper(member.error_callback)
+                else:
+                    # apply the default error-handler
+                    changes["error_callback"] = db_wrapper(cls.error)
 
             if isinstance(member, dSlashCommand):
                 if member.autocomplete_callbacks:
@@ -99,6 +112,44 @@ class Scale(dScale):
             listener.callback = db_wrapper(listener.callback)
 
         return self
+
+    async def error(self, e: Exception, ctx: dMessageContext | dInteractionContext, *_):
+        """
+        Basic error handler for commands.
+
+        Coverage
+        --------
+        - AssertionError
+            Displays the user that some input isn't correct.
+        - NotImplementedError
+            Displays the user that the command isn't implemented.
+        """
+        if isinstance(e, AssertionError):
+            return await ctx.reply(
+                embed=dEmbed(
+                    description=e.args[0],
+                    timestamp=dTimestamp.now(),
+                    footer=dEmbedFooter(
+                        text=t.g.executed_by(user=ctx.author, id=ctx.author.id),
+                        icon_url=ctx.author.display_avatar.url,
+                    ),
+                    color=Colors.assertion,
+                ),
+            )
+        elif isinstance(e, NotImplementedError):
+            return await ctx.reply(
+                embed=dEmbed(
+                    description=e.args[0],
+                    timestamp=dTimestamp.now(),
+                    footer=dEmbedFooter(
+                        text=t.g.executed_by(user=ctx.author, id=ctx.author.id),
+                        icon_url=ctx.author.display_avatar.url,
+                    ),
+                    color=Colors.notimplemented,
+                ),
+            )
+        else:
+            raise
 
 
 async def pre_call_callback(self, callback: Callable, context: dContext):
