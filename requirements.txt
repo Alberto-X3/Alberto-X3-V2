@@ -2,6 +2,7 @@ aenum~=3.1.8
 aiomysql~=0.0.22
 aioredis~=2.0.1
 AlbertUnruhUtils.py~=2.1.0
+attr~=0.3.1
 cryptography~=36.0.1
 dis-snek~=7.0.0
 orjson~=3.6.7
