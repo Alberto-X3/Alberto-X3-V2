@@ -9,6 +9,8 @@ __all__ = (
 
 import importlib
 
+from aenum import EnumType
+from inspect import iscoroutinefunction
 from sqlalchemy import Column, String, BigInteger
 from typing import TYPE_CHECKING
 
@@ -16,7 +18,7 @@ from AlbertUnruhUtils.utils.logger import get_logger
 
 from .aio import run_as_task
 from .enum import NoAliasEnum
-from .database import Base, db
+from .database import Base, db, db_context
 
 
 if TYPE_CHECKING:
@@ -50,7 +52,6 @@ class StatsModel(Base):
 
 
 class StatsEnum(NoAliasEnum):
-    @property
     async def incr(self) -> int:
         return (await StatsModel.incr(self.fullname)).value
 
@@ -61,13 +62,13 @@ class StatsEnum(NoAliasEnum):
 
 
 @run_as_task
-async def try_increment(module: ModuleType, context: dContext):
+async def try_increment(module: ModuleType, context: dContext) -> bool:
     """
     Tries to increment a Stat for a Module in background.
     """
-    stats: Optional[StatsEnum] = getattr(module, "Stats", None)
+    stats: Optional[StatsEnum]
 
-    if stats is None:
+    if (stats := getattr(module, "Stats", None)) is None:
         try:
             module = importlib.import_module(".stats", module.__package__)
             stats = getattr(module, "Stats", None)
@@ -75,7 +76,36 @@ async def try_increment(module: ModuleType, context: dContext):
             pass
 
     if stats is None:
-        logger.info(f"Can't find `Stats` for {module.__name__!r}!")
-        return
+        logger.info(f"Can't find 'Stats' for {module.__name__!r}!")
+        return False
 
-    # ToDo: actual incrementing
+    if not isinstance(stats, EnumType):
+        logger.warning(
+            f"{module.__name__+'.Stats'!r} is not an instance of 'StatsEnum', "
+            f"received an instance of {stats.__class__.__name__!r} instead!"
+        )
+        return False
+
+    if (
+        enum := getattr(stats, context.invoked_name, None)
+    ) is None or enum.value is False:
+        logger.info(
+            f"{module.__name__+'.Stats'!r} is either deactivated or not set,"
+            f"so it will be ignored."
+        )
+        return False
+
+    if (incr := getattr(enum, "incr", None)) is None or not iscoroutinefunction(incr):
+        logger.warning(
+            f"{module.__name__+'.Stats'!r} is not an instance of 'StatsEnum', "
+            f"received a different type of Enum instead!"
+        )
+        return False
+
+    async with db_context():
+        value = await incr()
+
+    logger.info(
+        f"Incremented stats for {context.invoked_name!r} in {module.__package__!r} ({value})"
+    )
+    return True
