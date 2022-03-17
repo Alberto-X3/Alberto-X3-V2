@@ -24,6 +24,7 @@ from dis_snek import (
 
 from .colors import AllColors as Colors
 from .database import db_wrapper
+from .stats import try_increment
 from .translations import t
 
 
@@ -152,7 +153,7 @@ class Scale(dScale):
             raise
 
 
-async def pre_call_callback(self, callback: Callable, context: dContext):
-    print(f"command called ({callback} | {context})")
-    # ToDo: make a stats-call
+async def pre_call_callback(self: dBaseCommand, callback: Callable, context: dContext):
+    module = inspect.getmodule(self.scale or self.callback)
+    await try_increment(module, context)
     return await self.call_callback(callback, context)

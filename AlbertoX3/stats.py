@@ -1,13 +1,31 @@
 from __future__ import annotations
 
 
-__all__ = ("StatsEnum",)
+__all__ = (
+    "StatsEnum",
+    "try_increment",
+)
 
+
+import importlib
 
 from sqlalchemy import Column, String, BigInteger
+from typing import TYPE_CHECKING
 
+from AlbertUnruhUtils.utils.logger import get_logger
+
+from .aio import run_as_task
 from .enum import NoAliasEnum
 from .database import Base, db
+
+
+if TYPE_CHECKING:
+    from dis_snek import Context as dContext
+    from types import ModuleType
+    from typing import Optional
+
+
+logger = get_logger(__name__.split(".")[-1], level=None, add_handler=False)
 
 
 class StatsModel(Base):
@@ -40,3 +58,24 @@ class StatsEnum(NoAliasEnum):
         stats = await StatsModel.get(self.fullname)
         stats.value = 0
         return 0
+
+
+@run_as_task
+async def try_increment(module: ModuleType, context: dContext):
+    """
+    Tries to increment a Stat for a Module in background.
+    """
+    stats: Optional[StatsEnum] = getattr(module, "Stats", None)
+
+    if stats is None:
+        try:
+            module = importlib.import_module(".stats", module.__package__)
+            stats = getattr(module, "Stats", None)
+        except ImportError:
+            pass
+
+    if stats is None:
+        logger.info(f"Can't find `Stats` for {module.__name__!r}!")
+        return
+
+    # ToDo: actual incrementing
