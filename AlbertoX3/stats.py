@@ -16,7 +16,6 @@ from typing import TYPE_CHECKING
 
 from AlbertUnruhUtils.utils.logger import get_logger
 
-from .aio import run_as_task
 from .enum import NoAliasEnum
 from .database import Base, db, db_context
 
@@ -61,10 +60,9 @@ class StatsEnum(NoAliasEnum):
         return 0
 
 
-@run_as_task
 async def try_increment(module: ModuleType, context: dContext) -> bool:
     """
-    Tries to increment a Stat for a Module in background.
+    Tries to increment a Stat for a Module.
     """
     stats: Optional[StatsEnum]
 
