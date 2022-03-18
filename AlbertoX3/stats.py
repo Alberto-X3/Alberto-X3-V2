@@ -10,7 +10,6 @@ __all__ = (
 import importlib
 
 from aenum import EnumType
-from inspect import iscoroutinefunction
 from sqlalchemy import Column, String, BigInteger
 from typing import TYPE_CHECKING
 
@@ -95,15 +94,15 @@ async def try_increment(module: ModuleType, context: dContext) -> bool:
         )
         return False
 
-    if (incr := getattr(enum, "incr", None)) is None or not iscoroutinefunction(incr):
+    if not isinstance(enum, StatsEnum):
         logger.warning(
             f"{module.__name__+'.Stats'!r} is not an instance of 'StatsEnum', "
-            f"received a different type of Enum instead!"
+            f"received an instance of {stats.__class__.__name__!r} instead!"
         )
         return False
 
     async with db_context():
-        value = await incr()
+        value = await enum.incr()
 
     logger.info(
         f"Incremented stats for {context.invoked_name!r} in {module.__package__!r} ({value})"
