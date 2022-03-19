@@ -81,8 +81,9 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
         ),
     )
     to_ping = "".join(f"<@{c[0]}>" for c in Config.CONTRIBUTORS)
-    f = Path(__file__).parent / f"tmp/{next(count)}.log"
-    f.parent.mkdir(exist_ok=True)
+    f = Config.TMP_FOLDER / Config.TMP_PATTERN(
+        scale="root", id=next(count), suffix="log"
+    )
     f.write_text("".join(format_exception(error)), encoding="utf-8")  # type: ignore
     embed = Embed(
         description=f"**An error occurred [here]({msg.jump_url}).**",
@@ -97,7 +98,8 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
         file=File(f, "traceback.py"),
     )
     await Snake.on_command_error(bot, ctx, error, *args, **kwargs)
-    f.unlink()
+    if Config.TMP_REMOVE:
+        f.unlink()
 
 
 bot.on_command_error = on_command_error

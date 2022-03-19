@@ -15,7 +15,7 @@ from typing import TYPE_CHECKING
 from yaml import safe_load
 
 from .config import Config
-from .types import PrimitiveScale
+from .types import PrimitiveScale, FormatStr
 from .utils import get_language
 
 
@@ -52,10 +52,6 @@ def merge(
             base[k] = v
 
     return base
-
-
-class FormatStr(str):
-    __call__ = str.format
 
 
 class TranslationDict(dict):

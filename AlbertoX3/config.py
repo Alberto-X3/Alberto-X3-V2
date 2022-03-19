@@ -16,8 +16,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from yaml import safe_load
 
-from .types import PrimitiveScale
-from .utils import get_values
+from .types import PrimitiveScale, FormatStr
+from .utils import get_values, get_bool
 
 
 if TYPE_CHECKING:
@@ -74,6 +74,11 @@ class Config:
     SCALES_FOLDER_RAW: str
     SCALES_FOLDER: Path
     SCALES: Set[PrimitiveScale]
+
+    TMP_FOLDER_RAW: str
+    TMP_FOLDER: Path
+    TMP_PATTERN: FormatStr
+    TMP_REMOVE: bool
 
 
 def get_config_values() -> str:
@@ -173,7 +178,7 @@ def get_scales(
 
     Returns
     -------
-    Set[_Scale]
+    Set[PrimitiveScale]
         All paths to the scales.
     """
     scales = set()
@@ -201,6 +206,17 @@ def get_scales(
     return scales
 
 
+def load_tmp(config: Dict, path: Path = Path.cwd()) -> NoReturn:
+    Config.TMP_FOLDER_RAW = config["tmp"]["folder"]
+    folder = Path(Config.TMP_FOLDER_RAW)
+    if not folder.is_absolute():  # a relative path is given
+        folder = path / folder
+    folder.mkdir(exist_ok=True)
+    Config.TMP_FOLDER = folder
+    Config.TMP_PATTERN = FormatStr(config["tmp"]["pattern"])
+    Config.TMP_REMOVE = get_bool(config["tmp"]["remove"])
+
+
 def load_config_file(path: Path) -> NoReturn:
     """
     Loads the configuration.
@@ -219,3 +235,4 @@ def load_config_file(path: Path) -> NoReturn:
     load_developers(config)
     load_language(config)
     load_scales(config, path.parent)
+    load_tmp(config, path.parent)

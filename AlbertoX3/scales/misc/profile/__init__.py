@@ -25,6 +25,7 @@ from dis_snek import (
 
 from AlbertoX3.adis_snek import Scale
 from AlbertoX3.aio import run_in_thread
+from AlbertoX3.config import Config
 from AlbertoX3.translations import t
 from AlbertoX3.utils import get_user
 
@@ -106,7 +107,6 @@ async def create_all_flags():
 class Profile(Scale):
     pattern_folder = Path(__file__).parent / "patterns"
     pattern_folder.mkdir(exist_ok=True)
-    (Path(__file__).parent / "tmp").mkdir(exist_ok=True)
 
     @message_command("profile")
     async def profile(self, ctx: MessageContext):
@@ -154,7 +154,9 @@ class Profile(Scale):
             embed=Embed(description=t.progress.downloading, **embed_data)
         )
         await sleep(0.4)  # rate-limits...
-        f = Path(__file__).parent / f"tmp/{next(count)}.png"
+        f = Config.TMP_FOLDER / Config.TMP_PATTERN(
+            scale=self.name, id=next(count), suffix="png"
+        )
         await user.avatar.save(f, size=4096)
 
         # prepare profile
@@ -194,7 +196,8 @@ class Profile(Scale):
                 **embed_data,
             ),
         )
-        f.unlink()
+        if Config.TMP_REMOVE:
+            f.unlink()
 
 
 def setup(bot: Snake):

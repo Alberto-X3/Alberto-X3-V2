@@ -1,11 +1,18 @@
 from __future__ import annotations
 
 
-__all__ = ("PrimitiveScale",)
+__all__ = (
+    "FormatStr",
+    "PrimitiveScale",
+)
 
 
 from pathlib import Path
 from typing import NamedTuple
+
+
+class FormatStr(str):
+    __call__ = str.format
 
 
 PrimitiveScale = NamedTuple(
