@@ -16,25 +16,13 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 from yaml import safe_load
 
+from .contributor import Contributor
 from .types import PrimitiveScale, FormatStr
 from .utils import get_values, get_bool
 
 
 if TYPE_CHECKING:
-    from typing import Tuple, Set, NoReturn, Dict, List
-
-
-class Contributor:
-    """
-    A collection of every contributor.
-
-    Notes
-    -----
-    Values are ``("Discord ID", ("GitHub ID", "GitHub Node-ID"))``-tuples.
-    Following signature is used: ``Tuple[int, Tuple[int, str]]``
-    """
-
-    AlbertUnruh = (546320163276849162, (73029826, "MDQ6VXNlcjczMDI5ODI2"))
+    from typing import Set, NoReturn, Dict, List
 
 
 class Config:
@@ -62,8 +50,8 @@ class Config:
     SUPPORT_DISCORD: str
 
     # developers
-    AUTHOR: Tuple[int, Tuple[int, str]]
-    CONTRIBUTORS: Set[Tuple[int, Tuple[int, str]]]
+    AUTHOR: Contributor
+    CONTRIBUTORS: Set[Contributor]
 
     # language
     LANGUAGE_DEFAULT: str

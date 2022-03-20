@@ -9,6 +9,7 @@ from .adis_snek import *
 from .aio import *
 from .colors import *
 from .config import *
+from .contributor import *
 from .database import *
 from .enum import *
 from .environment import *
