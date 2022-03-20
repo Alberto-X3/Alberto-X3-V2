@@ -45,7 +45,7 @@ class Util(Scale):
 
         paginator = Paginator.create_from_string(
             self.bot,
-            inspect.getsource(obj),
+            inspect.getsource(obj).replace("`", "`\u200B"),
             "```py\n",
             "\n```",
             4000,
