@@ -7,3 +7,4 @@ executed_by: Executed by {user} ({id})
 no_reason: No reason
 not_found:
   user: Can't find this user... :(
+  unable: Unable to find `{query}`

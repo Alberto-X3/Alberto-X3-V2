@@ -16,10 +16,14 @@ from dis_snek.ext.paginators import Paginator
 from dis_snek import message_command
 
 from AlbertoX3.adis_snek import Scale
+from AlbertoX3.translations import t
 
 
 if TYPE_CHECKING:
     from dis_snek import Snake, MessageContext
+
+
+tg = t.g
 
 
 class Util(Scale):
@@ -41,7 +45,7 @@ class Util(Scale):
         if isinstance(obj, Scale):
             obj = obj.__class__
 
-        assert obj is not None, f"Unable to find `{query}`!"
+        assert obj is not None, tg.not_found.unable(query=query)
 
         paginator = Paginator.create_from_string(
             self.bot,
@@ -52,7 +56,7 @@ class Util(Scale):
             120,
         )
 
-        await paginator.send(ctx, True)
+        await paginator.reply(ctx)
 
 
 def setup(bot: Snake):
