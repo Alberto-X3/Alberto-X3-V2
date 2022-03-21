@@ -2,7 +2,9 @@ from __future__ import annotations
 
 
 __all__ = (
+    "StatsModel",
     "StatsEnum",
+    "DailyStatsModel",
     "try_increment",
 )
 
@@ -10,6 +12,7 @@ __all__ = (
 import importlib
 
 from aenum import EnumType
+from datetime import datetime
 from sqlalchemy import Column, String, BigInteger
 from typing import TYPE_CHECKING
 
@@ -60,6 +63,34 @@ class StatsEnum(NoAliasEnum):
         return 0
 
 
+class DailyStatsModel(Base):
+    __tablename__ = "daily_stats"
+
+    # format: YYYY-MM-DD (has a length of 10)
+    date: Column | str = Column(
+        String(10), primary_key=True, unique=True, nullable=False
+    )
+    value: Column | int = Column(BigInteger, nullable=False)
+
+    @staticmethod
+    async def get(date: Optional[datetime, str] = None) -> DailyStatsModel:
+        if date is None:
+            date = datetime.utcnow()
+        if isinstance(date, datetime):
+            date = date.strftime("%Y-%m-%d")
+        if (stats := await db.get(DailyStatsModel, date=date)) is None:
+            return await db.add(DailyStatsModel(date=date, value=0))
+        return stats
+
+    @staticmethod
+    async def incr(
+        date: Optional[datetime, str] = None, value: int = 1
+    ) -> DailyStatsModel:
+        stats = await DailyStatsModel.get(date)
+        stats.value += value
+        return stats
+
+
 @run_as_task
 async def try_increment(module: ModuleType, context: dContext) -> bool:
     """
@@ -67,6 +98,12 @@ async def try_increment(module: ModuleType, context: dContext) -> bool:
     """
     stats: Optional[StatsEnum]
 
+    # first daily stats, then individual stats
+    async with db_context():
+        value = (await DailyStatsModel.incr()).value
+    logger.info(f"Incremented daily stats ({value})")
+
+    # now the individual stats (if there are such)
     if (stats := getattr(module, "Stats", None)) is None:
         try:
             module = importlib.import_module(".stats", module.__package__)
