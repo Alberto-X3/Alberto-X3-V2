@@ -13,6 +13,7 @@ from .contributor import *
 from .database import *
 from .enum import *
 from .environment import *
+from .events import *
 from .permissions import *
 from .settings import *
 from .stats import *

@@ -28,6 +28,7 @@ from AlbertoX3 import (
     db,
     load_translations,
     t,
+    apply_block_events_adapter,
 )
 
 
@@ -106,4 +107,5 @@ bot.on_command_error = on_command_error
 
 
 bot.loop.run_until_complete(db.create_tables())
+apply_block_events_adapter(bot)
 bot.start(TOKEN)
