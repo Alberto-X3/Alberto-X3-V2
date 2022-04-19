@@ -13,6 +13,7 @@ from dis_snek.client.utils import TTLCache
 from AlbertUnruhUtils.utils.logger import get_logger
 
 from .database import Base, db, db_context
+from .stats import DailyStatsModel
 
 
 if TYPE_CHECKING:
@@ -92,11 +93,11 @@ class BlockEventsAdapter:
             if (tmp := tmp.get("id")) is not None:
                 collected.add(tmp)
 
-        if collected:  # don't create *every* time a new db-session
-            async with db_context():
-                for id in collected:  # noqa
-                    if await BlockedUserModel.is_blocked(int(id)):
-                        return
+        async with db_context():
+            await DailyStatsModel.incr_events()  # sneak it into the new session ^^
+            for id in collected:  # noqa
+                if await BlockedUserModel.is_blocked(int(id)):
+                    return
 
         await self.processor(event)
 
