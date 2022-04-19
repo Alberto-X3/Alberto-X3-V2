@@ -27,6 +27,7 @@ language:
 scale:
   folder: AlbertoX3/scales/
 
+# tmp
 tmp:
   folder: tmp/
   pattern: "{scale}.{id}.{suffix}"

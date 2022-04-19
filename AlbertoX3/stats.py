@@ -70,7 +70,8 @@ class DailyStatsModel(Base):
     date: Column | str = Column(
         String(10), primary_key=True, unique=True, nullable=False
     )
-    value: Column | int = Column(BigInteger, nullable=False)
+    commands: Column | int = Column(BigInteger, nullable=False)
+    events: Column | int = Column(BigInteger, nullable=False)
 
     @staticmethod
     async def get(date: Optional[datetime, str] = None) -> DailyStatsModel:
@@ -79,15 +80,23 @@ class DailyStatsModel(Base):
         if isinstance(date, datetime):
             date = date.strftime("%Y-%m-%d")
         if (stats := await db.get(DailyStatsModel, date=date)) is None:
-            return await db.add(DailyStatsModel(date=date, value=0))
+            return await db.add(DailyStatsModel(date=date, commands=0, events=0))
         return stats
 
     @staticmethod
-    async def incr(
+    async def incr_commands(
         date: Optional[datetime, str] = None, value: int = 1
     ) -> DailyStatsModel:
         stats = await DailyStatsModel.get(date)
-        stats.value += value
+        stats.commands += value
+        return stats
+
+    @staticmethod
+    async def incr_events(
+        date: Optional[datetime, str] = None, value: int = 1
+    ) -> DailyStatsModel:
+        stats = await DailyStatsModel.get(date)
+        stats.events += value
         return stats
 
 
@@ -100,7 +109,7 @@ async def try_increment(module: ModuleType, context: dContext) -> bool:
 
     # first daily stats, then individual stats
     async with db_context():
-        value = (await DailyStatsModel.incr()).value
+        value = (await DailyStatsModel.incr_commands()).commands
     logger.info(f"Incremented daily stats ({value})")
 
     # now the individual stats (if there are such)
