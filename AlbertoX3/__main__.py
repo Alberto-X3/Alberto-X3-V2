@@ -19,6 +19,7 @@ from dis_snek import (
 )
 
 from AlbertoX3 import (
+    event_loop,
     load_config_file,
     Config,
     get_config_values,
@@ -106,6 +107,10 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
 bot.on_command_error = on_command_error
 
 
-bot.loop.run_until_complete(db.create_tables())
+event_loop.run_until_complete(db.create_tables())
+
+# needs to be the last before starting the bot to make sure
+# that every event-processor was already registered
 apply_block_events_adapter(bot)
-bot.start(TOKEN)
+
+event_loop.run_until_complete(bot.astart(TOKEN))
