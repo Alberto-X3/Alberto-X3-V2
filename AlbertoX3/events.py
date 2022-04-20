@@ -94,15 +94,18 @@ class BlockEventsAdapter:
                 collected.add(tmp)
 
         async with db_context():
-            await DailyStatsModel.incr_events()  # sneak it into the new session ^^
             for id in collected:  # noqa
                 if await BlockedUserModel.is_blocked(int(id)):
+                    logger.debug(f"Blocked dispatching Event: {event.resolved_name}")
                     return
+            await DailyStatsModel.incr_events()  # sneak it into the new session ^^
 
         await self.processor(event)
 
 
 def apply_block_events_adapter(bot: Snake):
-    logger.debug(f"Applying BlockEventsAdapter to {', '.join(bot.processors.keys())}")
+    logger.debug(
+        f"Applying BlockEventsAdapter ({len(bot.processors)}x) to {', '.join(bot.processors.keys())}"
+    )
     for name, processor in bot.processors.items():
         bot.processors[name] = BlockEventsAdapter(processor)
