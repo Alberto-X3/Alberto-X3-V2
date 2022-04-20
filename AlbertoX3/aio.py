@@ -2,6 +2,7 @@ from __future__ import annotations
 
 
 __all__ = (
+    "event_loop",
     "Thread",
     "LockDeco",
     "GatherAnyError",
@@ -21,6 +22,7 @@ from asyncio import (
     create_task,
     gather,
     get_running_loop,
+    get_event_loop,
 )
 from functools import partial, update_wrapper, wraps
 from typing import TYPE_CHECKING, TypeVar
@@ -30,6 +32,9 @@ if TYPE_CHECKING:
 
 
 T = TypeVar("T")
+
+
+event_loop: AbstractEventLoop = get_event_loop()
 
 
 class Thread(t_Thread):

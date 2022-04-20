@@ -52,7 +52,7 @@ async def get_member(
             return await ctx.bot.fetch_member(raw, ctx.guild_id)
         case str():
             # mention?
-            mention = re.findall(r"^<?@?!?([0-9]{15,20})>?$", raw)
+            mention = re.findall(r"^<?@?!?(\d{15,20})>?$", raw)
             if mention:
                 return await ctx.bot.fetch_member(mention[0], ctx.guild_id)
 
@@ -116,7 +116,7 @@ async def get_user(
             return await ctx.bot.fetch_user(raw)
         case str():
             # mention?
-            mention = re.findall(r"^<?@?!?([0-9]{15,20})>?$", raw)
+            mention = re.findall(r"^<?@?!?(\d{15,20})>?$", raw)
             if mention:
                 return await ctx.bot.fetch_user(mention[0])
 

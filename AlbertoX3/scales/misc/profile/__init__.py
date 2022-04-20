@@ -24,7 +24,7 @@ from dis_snek import (
 )
 
 from AlbertoX3.adis_snek import Scale
-from AlbertoX3.aio import run_in_thread
+from AlbertoX3.aio import run_in_thread, event_loop
 from AlbertoX3.config import Config
 from AlbertoX3.translations import t
 from AlbertoX3.utils import get_user
@@ -202,4 +202,4 @@ class Profile(Scale):
 
 def setup(bot: Snake):
     Profile(bot)
-    bot.loop.create_task(create_all_flags())
+    event_loop.create_task(create_all_flags())

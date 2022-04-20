@@ -19,6 +19,7 @@ from dis_snek import (
 )
 
 from AlbertoX3.adis_snek import Scale
+from AlbertoX3.aio import event_loop
 from AlbertoX3.database import db_wrapper
 from AlbertoX3.translations import t
 from AlbertoX3.scales.social.money import (
@@ -170,6 +171,6 @@ async def create_all_items(items):
 
 def setup(bot: Snake):
     Inventory(bot)
-    bot.loop.create_task(
+    event_loop.create_task(
         create_all_items(safe_load((Path(__file__).parent / "items.yml").read_text()))
     )
