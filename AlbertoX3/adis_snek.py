@@ -44,7 +44,7 @@ class Scale(dScale):
 
     def __new__(cls, bot: dSnake, *args, **kwargs):
         # whether it was already initialized
-        if getattr(cls, "instance") is not None:
+        if getattr(cls, "instance", None) is not None:
             return cls.instance
 
         for name, member in inspect.getmembers(
