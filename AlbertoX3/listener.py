@@ -3,9 +3,13 @@ from __future__ import annotations
 
 __all__ = (
     "blocked_event_owner_event",
-    "blocked_event_contributor_event",
-    "blocked_event_message_edit",
+    "blocked_event_message_create",
+    "blocked_event_message_update",
     "blocked_event_message_delete",
+    "blocked_event_guild_member_add",
+    "blocked_event_guild_member_update",
+    "blocked_event_guild_member_remove",
+    "event_contributor_event",
 )
 
 
@@ -85,6 +89,12 @@ class Channel:
 
 # called when an event was blocked
 blocked_event_owner_event = Channel()
-blocked_event_contributor_event = Channel()
-blocked_event_message_edit = Channel()
+blocked_event_message_create = Channel()
+blocked_event_message_update = Channel()
 blocked_event_message_delete = Channel()
+blocked_event_guild_member_add = Channel()
+blocked_event_guild_member_update = Channel()
+blocked_event_guild_member_remove = Channel()
+
+# called when an event was called
+event_contributor_event = Channel()
