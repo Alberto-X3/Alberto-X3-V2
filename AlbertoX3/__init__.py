@@ -14,9 +14,10 @@ from .database import *
 from .enum import *
 from .environment import *
 from .events import *
-import listener as listener  # don't use * to prevent channel spam in here
 from .settings import *
 from .stats import *
 from .translations import *
 from .types import *
 from .utils import *
+
+# listener won't be imported to prevent spam of pubsub channels
