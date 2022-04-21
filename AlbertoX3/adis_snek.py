@@ -39,7 +39,14 @@ if TYPE_CHECKING:
 
 
 class Scale(dScale):
+    enabled: bool = True
+    instance: Scale
+
     def __new__(cls, bot: dSnake, *args, **kwargs):
+        # whether it was already initialized
+        if getattr(cls, "instance") is not None:
+            return cls.instance
+
         for name, member in inspect.getmembers(
             cls, predicate=lambda x: isinstance(x, (dBaseCommand, dListener, dTask))
         ):
@@ -112,7 +119,13 @@ class Scale(dScale):
         for listener in self.listeners:
             listener.callback = db_wrapper(listener.callback)
 
+        self.instance = self
+
         return self
+
+    def __delete__(self, instance):
+        # "un-"init
+        del self.instance
 
     async def error(self, e: Exception, ctx: dMessageContext | dInteractionContext, *_):
         """
