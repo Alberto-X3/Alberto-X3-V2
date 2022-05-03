@@ -88,7 +88,6 @@ class Channel:
 # ****** public listener ****** #
 
 # called when an event was blocked
-blocked_event_owner_event = Channel()
 blocked_event_message_create = Channel()
 blocked_event_message_update = Channel()
 blocked_event_message_delete = Channel()

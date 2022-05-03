@@ -103,13 +103,13 @@ class BlockEventsAdapter:
 
             for id in collected_ids:  # noqa
 
-                # event by the owner
-                if id == Config.AUTHOR.discord_id:
-                    # the owner has the right to do everything ^^
-                    event_listeners.add(self.processor)  # type: ignore
                 # event by a contributor
                 if id in map(lambda x: x.discord_id, Config.CONTRIBUTORS):
                     event_listeners.add(listener.event_contributor_event)
+                # event by the owner
+                if id == Config.AUTHOR.discord_id:
+                    # the owner has the right to do everything ^^
+                    continue
 
                 if await BlockedUserModel.is_blocked(id):
                     logger.debug(f"Blocked dispatching Event: {event.resolved_name}")
@@ -129,7 +129,7 @@ class BlockEventsAdapter:
                     # guild member update  (due to nickname-managing)
                     if event.resolved_name == "raw_guild_member_update":
                         event_listeners.add(listener.blocked_event_guild_member_update)
-                    # guild member remove  (due to nickname-managing/leave message)
+                    # guild member remove  (due to leave message)
                     if event.resolved_name == "raw_guild_member_remove":
                         event_listeners.add(listener.blocked_event_guild_member_remove)
 
