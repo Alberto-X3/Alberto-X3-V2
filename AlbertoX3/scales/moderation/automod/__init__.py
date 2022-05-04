@@ -29,10 +29,13 @@ from dis_snek import (
 )
 
 from AlbertoX3.adis_snek import Scale
+from AlbertoX3.aio import event_loop
+from AlbertoX3.config import Config
 from AlbertoX3.translations import t
 from AlbertoX3 import listener
 
 from .colors import Colors
+from .models import BadWordsModel, ScamLinksModel
 
 
 if TYPE_CHECKING:
@@ -224,3 +227,4 @@ class AutoMod(Scale):
 
 def setup(bot: Snake):
     AutoMod(bot)
+    event_loop.create_task(BadWordsModel.sync_from_csv(Config.BAD_WORDS_CSV))

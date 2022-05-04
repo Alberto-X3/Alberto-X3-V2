@@ -63,10 +63,15 @@ class Config:
     SCALES_FOLDER: Path
     SCALES: Set[PrimitiveScale]
 
+    # tmp
     TMP_FOLDER_RAW: str
     TMP_FOLDER: Path
     TMP_PATTERN: FormatStr
     TMP_REMOVE: bool
+
+    # auto mod
+    BAD_WORDS_CSV: Path
+    SCAM_LINKS_CSV: Path
 
 
 def get_config_values() -> str:
@@ -205,6 +210,17 @@ def load_tmp(config: Dict, path: Path = Path.cwd()) -> NoReturn:
     Config.TMP_REMOVE = get_bool(config["tmp"]["remove"])
 
 
+def load_auto_mod(config: Dict, path: Path = Path.cwd()) -> NoReturn:
+    csv_path = Path(config["auto-mod"]["bad-words-csv"])
+    if not csv_path.is_absolute():
+        csv_path = path / csv_path
+    Config.BAD_WORDS_CSV = csv_path
+    csv_path = Path(config["auto-mod"]["scam-links-csv"])
+    if not csv_path.is_absolute():
+        csv_path = path / csv_path
+    Config.SCAM_LINKS_CSV = csv_path
+
+
 def load_config_file(path: Path) -> NoReturn:
     """
     Loads the configuration.
@@ -224,3 +240,4 @@ def load_config_file(path: Path) -> NoReturn:
     load_language(config)
     load_scales(config, path.parent)
     load_tmp(config, path.parent)
+    load_auto_mod(config)
