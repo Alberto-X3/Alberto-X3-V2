@@ -32,3 +32,8 @@ tmp:
   folder: tmp/
   pattern: "{scale}.{id}.{suffix}"
   remove: true
+
+# auto mod
+auto-mod:
+  bad-words-csv: bad_words.csv
+  scam-links-csv: scam_links.csv
