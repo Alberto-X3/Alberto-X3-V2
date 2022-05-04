@@ -1,3 +1,11 @@
 word,weight,reason(optional)
-faggot,90,homophobic word
-tranny,90,transphobic word
+faggot,100,homophobic
+tranny,100,transphobic
+nigger,100,racism
+nigga,100,racism
+卐,300,racism/nazi
+卍,300,racism/nazi
+schwuchtel,100,homophobic
+arschloch,100,swearing
+behindert,40,swearing
+neger,100,racism
