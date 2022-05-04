@@ -2,7 +2,7 @@ from __future__ import annotations
 
 
 __all__ = (
-    "AutoMod",
+    "AutoModScale",
     "setup",
 )
 
@@ -56,7 +56,7 @@ RE_LINK = re.compile(
 )
 
 
-class AutoMod(Scale):
+class AutoModScale(Scale):
     def __init__(self, *_, **__):
         listener.blocked_event_message_create.register(
             self.discrete_message_create,
@@ -253,6 +253,6 @@ class AutoMod(Scale):
 
 
 def setup(bot: Snake):
-    AutoMod(bot)
+    AutoModScale(bot)
     event_loop.create_task(BadWordsModel.sync_from_csv(Config.BAD_WORDS_CSV))
     event_loop.create_task(ScamLinksModel.sync_from_csv(Config.SCAM_LINKS_CSV))

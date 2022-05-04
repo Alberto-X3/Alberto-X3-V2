@@ -1,0 +1,11 @@
+scanning: Scanning Activity...
+scanning_channel:
+  one: "Scanning one channel ({all} / {done} done):"
+  many: "Scanning {cnt} channels ({all} / {done} done):"
+scan_complete:
+  one: Scanned one channel.
+  many: Scanned {cnt} channels.
+updating_members: Updating Members...
+updated_members:
+  one: Updated one member.
+  many: Updated {cnt} members.
