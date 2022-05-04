@@ -8,6 +8,7 @@ __all__ = (
 
 
 import copy
+import re
 
 from typing import TYPE_CHECKING
 
@@ -31,6 +32,7 @@ from dis_snek import (
 from AlbertoX3.adis_snek import Scale
 from AlbertoX3.aio import event_loop
 from AlbertoX3.config import Config
+from AlbertoX3.database import db, filter_by
 from AlbertoX3.translations import t
 from AlbertoX3 import listener
 
@@ -40,11 +42,18 @@ from .models import BadWordsModel, ScamLinksModel
 
 if TYPE_CHECKING:
     from dis_snek import Snake, Message
-    from typing import Set
 
 
 tg = t.g
 t = t.automod
+
+
+RE_WORD = re.compile(
+    r"([^\u0000-\u0040\u005B-\u0060\u007B-\u00BF\u02B0-\u036F\u00D7\u00F7\u2000-\u2BFF])+",
+)
+RE_LINK = re.compile(
+    r"((?:([a-z\d]\.|[a-z\d][a-z\d\-]{0,61}[a-z\d])\.)+)([a-z\d]{2,63}|[a-z\d][a-z\d\-]{0,61}[a-z\d])\.?",
+)
 
 
 class AutoMod(Scale):
@@ -69,14 +78,32 @@ class AutoMod(Scale):
         )
 
     @staticmethod
-    async def get_scam_links(message: Message) -> Set[str]:
-        # ToDo: get entries from database (synced with a file on startup)
-        return set()
+    async def get_scam_link_score(message: Message) -> int:
+        return sum(
+            [
+                entry.weight
+                async for entry in await db.stream(filter_by(ScamLinksModel))
+                if entry.link
+                in map(
+                    lambda x: x.group(0).removeprefix("www."),
+                    RE_LINK.finditer(message.content),
+                )
+            ]
+        )
 
     @staticmethod
-    async def get_bad_words(message: Message) -> Set[str]:
-        # ToDo: get entries from database (synced with a file on startup)
-        return set()
+    async def get_bad_word_score(message: Message) -> int:
+        return sum(
+            [
+                entry.weight
+                async for entry in await db.stream(filter_by(BadWordsModel))
+                if entry.link
+                in map(
+                    lambda x: x.group(0),
+                    RE_WORD.finditer(message.content),
+                )
+            ]
+        )
 
     @staticmethod
     async def manage_nickname(member: Member):
@@ -228,3 +255,4 @@ class AutoMod(Scale):
 def setup(bot: Snake):
     AutoMod(bot)
     event_loop.create_task(BadWordsModel.sync_from_csv(Config.BAD_WORDS_CSV))
+    event_loop.create_task(ScamLinksModel.sync_from_csv(Config.SCAM_LINKS_CSV))

@@ -13,4 +13,4 @@ The weight will determine whether a message is only reported or deleted.
 
 ## They Should Have A Different Weight? / There Is A Bad Word Missing?
 
-**Then feel free to create an PR!**
+**Then feel free to create a PR!**
