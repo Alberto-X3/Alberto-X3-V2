@@ -82,7 +82,7 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
             timestamp=Timestamp.now(),
         ),
     )
-    to_ping = "".join(f"<@{c[0]}>" for c in Config.CONTRIBUTORS)
+    to_ping = "".join(c.discord_mention for c in Config.CONTRIBUTORS)
     f = Config.TMP_FOLDER / Config.TMP_PATTERN(
         scale="root", id=next(count), suffix="log"
     )
