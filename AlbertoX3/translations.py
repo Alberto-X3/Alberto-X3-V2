@@ -81,6 +81,8 @@ class TranslationDict(dict):
 
         return value
 
+    __getitem__ = __getattr__
+
     def __contains__(self, item) -> bool:
         return super().__contains__(item) or self._fallback.__contains__(item)
 
@@ -131,6 +133,8 @@ class TranslationNamespace:
             value._fallback = self.tn_get_language(Config.LANGUAGE_FALLBACK)[item]
 
         return value
+
+    __getitem__ = __getattr__
 
 
 class Translations:

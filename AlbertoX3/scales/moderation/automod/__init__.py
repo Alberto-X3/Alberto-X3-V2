@@ -36,6 +36,8 @@ from AlbertoX3.database import db, filter_by
 from AlbertoX3.translations import t
 from AlbertoX3 import listener
 
+from ...information.activity.models import ActivityModel
+
 from .colors import Colors
 from .models import BadWordsModel, ScamLinksModel
 
@@ -224,12 +226,12 @@ class AutoModScale(Scale):
     @listen()
     async def message_create(self, event: MessageCreate):
         await self.discrete_message_create(event)
-        ...  # ToDo: update last activity for member
+        await ActivityModel.update(event.message.author.id)
 
     @listen()
     async def message_update(self, event: MessageUpdate):
         await self.discrete_message_update(event)
-        ...  # ToDo: update last activity for member
+        await ActivityModel.update(event.after.author.id)
 
     @listen()
     async def message_delete(self, event: MessageDelete):
@@ -239,7 +241,7 @@ class AutoModScale(Scale):
     @listen()
     async def guild_member_add(self, event: MemberAdd):
         await self.discrete_guild_member_add(event)
-        ...  # ToDo: update last activity for member
+        await ActivityModel.update(event.member.id)
 
     @listen()
     async def guild_member_update(self, event: MemberUpdate):

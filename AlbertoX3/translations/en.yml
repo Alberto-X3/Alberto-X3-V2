@@ -3,6 +3,28 @@ permission_denied: Permission denied!
 enabled: ":white_checkmark: Enabled"
 disabled: ":x: Disabled"
 error: ":x: Error"
+max_concurrency_bucket:
+  0:
+    one: You can execute this command only one time per moment!
+    many: You can execute this command only {cnt}x times per moment!
+  1:
+    one: You can execute this command only one time per moment!
+    many: You can execute this command only {cnt}x times per moment!
+  2:
+    one: The command can only be executed one time per guild at the same moment!
+    many: The command can only be executed {cnt} times per guild at the same moment!
+  3:
+    one: The command can only be executed one time per channel at the same moment!
+    many: The command can only be executed {cnt} times per channel at the same moment!
+  4:
+    one: You can execute this command only one time per guild at the same moment!
+    many: You can execute this command only {cnt} times per guild at the same moment!
+  5:
+    one: The command can only be executed one time per category at the same moment!
+    many: The command can only be executed {cnt} times per category at the same moment!
+  6:
+    one: The command can only be executed one time per role at the same moment!
+    many: The command can only be executed {cnt} times per role at the same moment!
 executed_by: Executed by {user} ({id})
 no_reason: No reason
 not_found:

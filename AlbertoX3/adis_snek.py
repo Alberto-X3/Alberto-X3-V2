@@ -11,6 +11,7 @@ import inspect
 from functools import partial
 from typing import TYPE_CHECKING
 
+from dis_snek.client.errors import MaxConcurrencyReached as dMaxConcurrencyReached
 from dis_snek import (
     Scale as dScale,
     BaseCommand as dBaseCommand,
@@ -161,6 +162,20 @@ class Scale(dScale):
                     ),
                     color=Colors.notimplemented,
                 ),
+            )
+        elif isinstance(e, dMaxConcurrencyReached):
+            return await ctx.reply(
+                embed=dEmbed(
+                    description=t.g.max_concurrency_bucket[e.max_conc.bucket](
+                        cnt=e.max_conc.concurrent
+                    ),
+                    timestamp=dTimestamp.now(),
+                    footer=dEmbedFooter(
+                        text=t.g.executed_by(user=ctx.author, id=ctx.author.id),
+                        icon_url=ctx.author.display_avatar.url,
+                    ),
+                    color=Colors.max_concurrency,
+                )
             )
         else:
             raise

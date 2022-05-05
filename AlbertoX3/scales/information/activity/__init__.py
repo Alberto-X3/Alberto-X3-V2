@@ -17,6 +17,10 @@ from dis_snek.models.discord.enums import ChannelTypes
 from dis_snek import (
     Embed,
     Permissions,
+    message_command,
+    max_concurrency,
+    Buckets,
+    Timestamp,
 )
 
 from AlbertoX3.adis_snek import Scale
@@ -37,7 +41,6 @@ if TYPE_CHECKING:
         InteractionContext,
         Guild,
         GuildText,
-        Timestamp,
     )
     from typing import List, Dict
 
@@ -48,7 +51,6 @@ t = t.activity
 
 class ActivityScale(Scale):
     @staticmethod
-    @run_as_task
     async def scan(ctx: MessageContext | InteractionContext, days: int):
         async def update_status(msg: Message, content: str):
             embed.description = content
@@ -76,9 +78,7 @@ class ActivityScale(Scale):
                     age = (
                         datetime.utcnow().replace(tzinfo=timezone.utc) - c.created_at
                     ).days
-                    content += (
-                        f"\n:small_orange_diamond: {c.mention} ({d} / {min(age, days)})"
-                    )
+                    content += f"\n:small_orange_diamond: {t.channel(channel=c.mention, done=d, cnt=min(age, days))}"
                 message[0] = await update_status(message[0], content)
                 await asyncio.sleep(2)
 
@@ -111,7 +111,7 @@ class ActivityScale(Scale):
 
         task = event_loop.create_task(update_progress())
         try:
-            await semaphore_gather(10, *map(update_members, channels))
+            await semaphore_gather(15, *map(update_members, channels))
         finally:
             task.cancel()
 
@@ -121,13 +121,20 @@ class ActivityScale(Scale):
         message: Message = await ctx.send(embed=embed)
 
         await semaphore_gather(
-            10,
+            5,
             *[
                 db_wrapper(ActivityModel.update)(m.id, ts.timestamp())
                 for m, ts in members.items()
             ],
         )
         await update_status(message, t.updated_members(cnt=len(members)))
+
+    @message_command()
+    @max_concurrency(Buckets.GUILD, 1)
+    async def scan_activity(self, ctx: MessageContext):
+        args = ctx.args.copy()
+        days = args.pop(0) if args else (Timestamp.utcnow() - ctx.guild.created_at).days
+        await self.scan(ctx, days)
 
 
 def setup(bot: Snake):

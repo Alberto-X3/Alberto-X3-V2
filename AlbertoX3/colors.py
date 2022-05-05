@@ -132,6 +132,7 @@ class MaterialColors:
     warning: int = yellow["a200"]
     assertion: int = orange[900]
     notimplemented: int = lightblue[900]
+    max_concurrency: int = bluegrey[600]
 
 
 class AllColors(FlatUIColors, MaterialColors):

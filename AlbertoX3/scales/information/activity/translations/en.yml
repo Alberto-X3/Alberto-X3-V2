@@ -1,7 +1,10 @@
 scanning: Scanning Activity...
 scanning_channel:
-  one: "Scanning one channel ({all} / {done} done):"
-  many: "Scanning {cnt} channels ({all} / {done} done):"
+  one: "Scanning one channel (one out of one channel done):"
+  many: "Scanning {cnt} channels ({done} out of {all} channels done):"
+channel:
+  one: "{channel} ({done} out of {cnt} day done)"
+  many: "{channel} ({done} out of {cnt} days done)"
 scan_complete:
   one: Scanned one channel.
   many: Scanned {cnt} channels.

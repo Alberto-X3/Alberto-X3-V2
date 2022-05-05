@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, BigInteger
 
@@ -36,6 +36,8 @@ class ActivityModel(Base):
                 timestamp = datetime.fromtimestamp(timestamp)
             except ValueError:
                 timestamp = datetime.fromtimestamp(timestamp / 1000)
+        if timestamp is None:
+            timestamp = datetime.utcnow().replace(tzinfo=timezone.utc)
         if not (row := await db.get(ActivityModel, member=member)):
             row = await ActivityModel.add(member, timestamp)
         elif timestamp > row.timestamp:

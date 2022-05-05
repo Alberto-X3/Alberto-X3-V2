@@ -134,6 +134,6 @@ async def semaphore_gather(n: int, /, *tasks: Coroutine) -> List:
 def run_as_task(func: T) -> T:
     @wraps(func)
     async def inner(*args, **kwargs):
-        create_task(func(*args, **kwargs))
+        return create_task(func(*args, **kwargs))
 
     return inner
