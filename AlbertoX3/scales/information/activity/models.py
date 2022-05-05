@@ -37,7 +37,10 @@ class ActivityModel(Base):
             except ValueError:
                 timestamp = datetime.fromtimestamp(timestamp / 1000)
         if timestamp is None:
-            timestamp = datetime.utcnow().replace(tzinfo=timezone.utc)
+            timestamp = datetime.utcnow()
+        if timestamp.tzinfo is None:
+            timestamp = timestamp.replace(tzinfo=timezone.utc)
+
         if not (row := await db.get(ActivityModel, member=member)):
             row = await ActivityModel.add(member, timestamp)
         elif timestamp > row.timestamp:

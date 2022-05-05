@@ -133,7 +133,11 @@ class ActivityScale(Scale):
     @max_concurrency(Buckets.GUILD, 1)
     async def scan_activity(self, ctx: MessageContext):
         args = ctx.args.copy()
-        days = args.pop(0) if args else (Timestamp.utcnow() - ctx.guild.created_at).days
+        days = (
+            int(args.pop(0))
+            if args
+            else (Timestamp.utcnow() - ctx.guild.created_at).days
+        )
         await self.scan(ctx, days)
 
 
