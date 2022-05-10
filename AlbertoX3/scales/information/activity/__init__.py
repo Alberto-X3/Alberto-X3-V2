@@ -9,6 +9,7 @@ __all__ = (
 
 import asyncio
 
+from AlbertUnruhUtils.utils.logger import get_logger
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING
 
@@ -21,10 +22,11 @@ from dis_snek import (
     max_concurrency,
     Buckets,
     Timestamp,
+    Message,
 )
 
 from AlbertoX3.adis_snek import Scale
-from AlbertoX3.aio import run_as_task, event_loop, semaphore_gather
+from AlbertoX3.aio import event_loop, semaphore_gather
 from AlbertoX3.database import db_wrapper
 from AlbertoX3.translations import t
 
@@ -35,7 +37,6 @@ from .models import ActivityModel
 if TYPE_CHECKING:
     from dis_snek import (
         Snake,
-        Message,
         Member,
         MessageContext,
         InteractionContext,
@@ -45,6 +46,8 @@ if TYPE_CHECKING:
     from typing import List, Dict
 
 
+logger = get_logger(__name__.split(".")[-1], level=None, add_handler=False)
+
 tg = t.g
 t = t.activity
 
@@ -53,10 +56,15 @@ _SECONDS_PER_DAY = 86400  # 24 * 60 * 60
 
 class ActivityScale(Scale):
     @staticmethod
-    async def scan(ctx: MessageContext | InteractionContext, days: int):
+    async def scan(
+        ctx: MessageContext | InteractionContext, days: int, quiet: bool = False
+    ):
         async def update_status(msg: Message, content: str):
             embed.description = content
             embed.timestamp = datetime.utcnow()
+            logger.info(msg.embeds[0].title + "\t\t" + content.replace("\n", "\t"))
+            if quiet:
+                return msg
             try:
                 await msg.edit(embed=embed)
             except NotFound:
@@ -64,8 +72,11 @@ class ActivityScale(Scale):
             return msg
 
         embed = Embed(title=t.scanning, timestamp=datetime.utcnow())
-        # only index present will be 0
-        message: List[Message] = [await ctx.send(embed=embed)]
+        if not quiet:
+            # only index present will be 0
+            message: List[Message] = [await ctx.send(embed=embed)]
+        else:
+            message = [Message(embeds=[embed])]
         guild: Guild = ctx.guild
         members: Dict[Member, Timestamp] = {}
         active: Dict[GuildText, int] = {}
@@ -120,7 +131,10 @@ class ActivityScale(Scale):
         await update_status(message[0], t.scan_complete(cnt=len(channels)))
 
         embed = Embed(title=t.updating_members)
-        message: Message = await ctx.send(embed=embed)
+        if not quiet:
+            message: Message = await ctx.send(embed=embed)  # type: ignore
+        else:
+            message = Message(embeds=[embed])  # type: ignore
 
         await semaphore_gather(
             5,
