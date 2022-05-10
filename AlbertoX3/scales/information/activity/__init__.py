@@ -48,6 +48,8 @@ if TYPE_CHECKING:
 tg = t.g
 t = t.activity
 
+_SECONDS_PER_DAY = 86400  # 24 * 60 * 60
+
 
 class ActivityScale(Scale):
     @staticmethod
@@ -90,12 +92,12 @@ class ActivityScale(Scale):
                 s = (
                     datetime.utcnow().replace(tzinfo=timezone.utc) - msg.created_at
                 ).total_seconds()
-                if s > days * 24 * 60 * 60:
+                if s > days * _SECONDS_PER_DAY:
                     break
                 members[msg.author] = max(
                     members.get(msg.author, msg.created_at), msg.created_at
                 )
-                active[c] = int(s / (24 * 60 * 60))
+                active[c] = s // _SECONDS_PER_DAY
 
             del active[c]
             completed.append(c)
