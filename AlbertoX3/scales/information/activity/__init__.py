@@ -97,7 +97,7 @@ class ActivityScale(Scale):
                 members[msg.author] = max(
                     members.get(msg.author, msg.created_at), msg.created_at
                 )
-                active[c] = s // _SECONDS_PER_DAY
+                active[c] = int(s // _SECONDS_PER_DAY)
 
             del active[c]
             completed.append(c)
