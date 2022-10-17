@@ -7,8 +7,8 @@ from pathlib import Path
 from traceback import format_exception
 from typing import TYPE_CHECKING
 
-from dis_snek import (
-    Snake,
+from naff import (
+    Client,
     ActivityType,
     Intents,
     Activity,
@@ -34,7 +34,7 @@ from AlbertoX3 import (
 
 
 if TYPE_CHECKING:
-    from dis_snek import Context
+    from naff import SendableContext
 
 
 logger = get_logger(None, level=LOG_LEVEL)
@@ -49,7 +49,7 @@ logger.info(f"Config has now following values: \n{get_config_values()}")
 load_translations()
 
 
-bot = Snake(
+bot = Client(
     intents=Intents.ALL,
     default_prefix=Config.PREFIX,
     fetch_members=True,
@@ -70,7 +70,7 @@ for scale in Config.SCALES:
     bot.grow_scale(scale.package)
 
 
-async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
+async def on_command_error(ctx: SendableContext, error: Exception, *args, **kwargs):
     msg = await ctx.send(
         embed=Embed(
             color=AllColors.error,
@@ -99,7 +99,7 @@ async def on_command_error(ctx: Context, error: Exception, *args, **kwargs):
         embed=embed,
         file=File(f, "traceback.py"),
     )
-    await Snake.on_command_error(bot, ctx, error, *args, **kwargs)
+    await Client.on_command_error(bot, ctx, error, *args, **kwargs)
     if Config.TMP_REMOVE:
         f.unlink()
 

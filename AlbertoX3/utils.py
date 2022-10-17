@@ -15,7 +15,7 @@ import re
 import sys
 
 from typing import TYPE_CHECKING, TypeVar, Type
-from dis_snek import Context, User, Member, Snowflake_Type
+from naff import Context, User, Member, Snowflake_Type
 
 from .types import PrimitiveScale
 

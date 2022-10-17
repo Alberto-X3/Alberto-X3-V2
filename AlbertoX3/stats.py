@@ -24,7 +24,7 @@ from .database import Base, db, db_context
 
 
 if TYPE_CHECKING:
-    from dis_snek import Context as dContext
+    from naff import Context as nContext
     from types import ModuleType
     from typing import Optional
 
@@ -101,7 +101,7 @@ class DailyStatsModel(Base):
 
 
 @run_as_task
-async def try_increment(module: ModuleType, context: dContext) -> bool:
+async def try_increment(module: ModuleType, context: nContext) -> bool:
     """
     Tries to increment a Stat for a Module.
     """
@@ -132,7 +132,7 @@ async def try_increment(module: ModuleType, context: dContext) -> bool:
         return False
 
     if (
-        enum := getattr(stats, context.invoked_name, None)
+        enum := getattr(stats, context.__name__, None)
     ) is None or enum.value is False:
         logger.info(
             f"{module.__name__+'.Stats'!r} is either deactivated or not set,"
@@ -151,6 +151,6 @@ async def try_increment(module: ModuleType, context: dContext) -> bool:
         value = await enum.incr()
 
     logger.info(
-        f"Incremented stats for {context.invoked_name!r} in {module.__package__!r} ({value})"
+        f"Incremented stats for {context.__name__!r} in {module.__package__!r} ({value})"
     )
     return True

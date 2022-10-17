@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 
-__all__ = ("Scale",)
+__all__ = ("Client",)
 
 
 import attr
@@ -11,15 +11,15 @@ import inspect
 from functools import partial
 from typing import TYPE_CHECKING
 
-from dis_snek import (
-    Scale as dScale,
-    BaseCommand as dBaseCommand,
-    SlashCommand as dSlashCommand,
-    Listener as dListener,
-    Task as dTask,
-    Embed as dEmbed,
-    EmbedFooter as dEmbedFooter,
-    Timestamp as dTimestamp,
+from naff import (
+    Client as nClient,
+    BaseCommand as nBaseCommand,
+    SlashCommand as nSlashCommand,
+    Listener as nListener,
+    Task as nTask,
+    Embed as nEmbed,
+    EmbedFooter as nEmbedFooter,
+    Timestamp as nTimestamp,
 )
 
 from .colors import AllColors as Colors
@@ -29,23 +29,22 @@ from .translations import t
 
 
 if TYPE_CHECKING:
-    from dis_snek import (
-        Snake as dSnake,
-        Context as dContext,
-        MessageContext as dMessageContext,
-        InteractionContext as dInteractionContext,
+    from naff import (
+        Context as nContext,
+        PrefixedContext as nPrefixedContext,
+        InteractionContext as nInteractionContext,
     )
     from typing import Callable
 
 
-class Scale(dScale):
-    def __new__(cls, bot: dSnake, *args, **kwargs):
+class Client(nClient):
+    def __new__(cls, bot: nClient, *args, **kwargs):
         for name, member in inspect.getmembers(
-            cls, predicate=lambda x: isinstance(x, (dBaseCommand, dListener, dTask))
+            cls, predicate=lambda x: isinstance(x, (nBaseCommand, nListener, nTask))
         ):
             changes = {"callback": db_wrapper(member.callback)}
 
-            if isinstance(member, dBaseCommand):
+            if isinstance(member, nBaseCommand):
                 if member.pre_run_callback:
                     changes["pre_run_callback"] = db_wrapper(member.pre_run_callback)
                 if member.post_run_callback:
@@ -56,7 +55,7 @@ class Scale(dScale):
                     # apply the default error-handler
                     changes["error_callback"] = db_wrapper(cls.error)
 
-            if isinstance(member, dSlashCommand):
+            if isinstance(member, nSlashCommand):
                 if member.autocomplete_callbacks:
                     autocomplete_callbacks = {
                         name: db_wrapper(call)
@@ -71,10 +70,10 @@ class Scale(dScale):
                     changes["options"] = options
 
             if attr.has(member.__class__):
-                # dBaseCommand
+                # nBaseCommand
                 wrapped_member = attr.evolve(member, **changes)
             else:
-                # dListener | dTask
+                # nListener | nTask
                 wrapped_member = copy.copy(member)
                 for change in changes:
                     setattr(wrapped_member, change, changes[change])
@@ -89,7 +88,7 @@ class Scale(dScale):
 
         # super-call is here since it registers all callbacks from the commands etc.
         self = super().__new__(cls, bot, *args, **kwargs)
-
+        self: nClient
         # checks
         scale_checks = []
         for check in self.scale_checks:
@@ -114,7 +113,7 @@ class Scale(dScale):
 
         return self
 
-    async def error(self, e: Exception, ctx: dMessageContext | dInteractionContext, *_):
+    async def error(self, e: Exception, ctx: nPrefixedContext | nInteractionContext, *_):
         """
         Basic error handler for commands.
 
@@ -125,35 +124,36 @@ class Scale(dScale):
         - NotImplementedError
             Displays the user that the command isn't implemented.
         """
-        if isinstance(e, AssertionError):
-            return await ctx.reply(
-                embed=dEmbed(
-                    description=e.args[0],
-                    timestamp=dTimestamp.now(),
-                    footer=dEmbedFooter(
-                        text=t.g.executed_by(user=ctx.author, id=ctx.author.id),
-                        icon_url=ctx.author.display_avatar.url,
+        match e:
+            case AssertionError():
+                return await ctx.reply(
+                    embed=nEmbed(
+                        description=e.args[0],
+                        timestamp=nTimestamp.now(),
+                        footer=nEmbedFooter(
+                            text=t.g.executed_by(user=ctx.author, id=ctx.author.id),
+                            icon_url=ctx.author.display_avatar.url,
+                        ),
+                        color=Colors.assertion,
                     ),
-                    color=Colors.assertion,
-                ),
-            )
-        elif isinstance(e, NotImplementedError):
-            return await ctx.reply(
-                embed=dEmbed(
-                    description=e.args[0],
-                    timestamp=dTimestamp.now(),
-                    footer=dEmbedFooter(
-                        text=t.g.executed_by(user=ctx.author, id=ctx.author.id),
-                        icon_url=ctx.author.display_avatar.url,
+                )
+            case NotImplementedError():
+                return await ctx.reply(
+                    embed=nEmbed(
+                        description=e.args[0],
+                        timestamp=nTimestamp.now(),
+                        footer=nEmbedFooter(
+                            text=t.g.executed_by(user=ctx.author, id=ctx.author.id),
+                            icon_url=ctx.author.display_avatar.url,
+                        ),
+                        color=Colors.notimplemented,
                     ),
-                    color=Colors.notimplemented,
-                ),
-            )
-        else:
-            raise
+                )
+            case _:
+                raise
 
 
-async def pre_call_callback(self: dBaseCommand, callback: Callable, context: dContext):
-    module = inspect.getmodule(self.scale or self.callback)
+async def pre_call_callback(self: nBaseCommand, callback: Callable, context: nContext):
+    module = inspect.getmodule(self.extension or self.callback)
     await try_increment(module, context)
     return await self.call_callback(callback, context)

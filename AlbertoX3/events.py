@@ -7,8 +7,8 @@ __all__ = ("apply_block_events_adapter",)
 from sqlalchemy import Column, BigInteger
 from typing import TYPE_CHECKING
 
-from dis_snek.api.events import RawGatewayEvent
-from dis_snek.client.utils import TTLCache
+from naff.api.events import RawGatewayEvent
+from naff.client.utils import TTLCache
 
 from AlbertUnruhUtils.utils.logger import get_logger
 
@@ -17,7 +17,7 @@ from .stats import DailyStatsModel
 
 
 if TYPE_CHECKING:
-    from dis_snek import Snake
+    from naff import Client
     from typing import Callable, Coroutine
 
 
@@ -103,7 +103,7 @@ class BlockEventsAdapter:
         await self.processor(event)
 
 
-def apply_block_events_adapter(bot: Snake):
+def apply_block_events_adapter(bot: Client):
     logger.debug(
         f"Applying BlockEventsAdapter ({len(bot.processors)}x) to {', '.join(bot.processors.keys())}"
     )
